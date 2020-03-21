@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysUserAreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysUserArea">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="sys_user_id" property="sysUserId" />
+        <result column="sys_area_id" property="sysAreaId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, sys_user_id AS sysUserId, sys_area_id AS sysAreaId
+    </sql>
+
+    <!--通过用户id，获取关联城市信息-->
+    <select id="getByUserId" resultType="com.haoqi.magic.system.model.dto.UserAreaDTO">
+        SELECT
+        b.id AS areaId,
+        b.province_name,
+        b.city_name
+        FROM
+        sys_user_area a LEFT JOIN
+        sys_area b on a.sys_area_id = b.id
+        WHERE 1=1
+        AND a.sys_user_id = #{userId}
+    </select>
+
+</mapper>

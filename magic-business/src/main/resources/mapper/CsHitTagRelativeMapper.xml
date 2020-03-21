@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsHitTagRelativeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsHitTagRelative">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+        <result column="cs_tag_id" property="csTagId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_info_id AS csCarInfoId, cs_tag_id AS csTagId
+    </sql>
+
+    <!--批量插入命中标签-->
+    <insert id="insertHitTagRelative">
+        INSERT INTO
+        cs_hit_tag_relative(
+        creator,
+        modifier,
+        gmt_create,
+        gmt_modified,
+        is_deleted,
+        cs_car_info_id,
+        cs_tag_id) VALUES
+        <foreach collection="cars" item="item" index="index" separator=",">
+            (1,
+            1,
+            now(),
+            now(),
+            0,
+            #{item},
+            #{tagId}
+            )
+        </foreach>
+    </insert>
+
+    <!--删除车辆原先旧标签-->
+    <delete id="deleteOldHit">
+        DELETE FROM cs_hit_tag_relative
+        WHERE is_deleted = 0
+        AND cs_tag_id = #{tagId}
+        AND cs_car_info_id IN
+        <foreach collection="cars" open="(" close=")" item="item" index="index" separator=",">
+            #{item.carId}
+        </foreach>
+    </delete>
+    <select id="getCsTagsByCarId" resultType="com.haoqi.magic.business.model.dto.TagsDTO">
+        SELECT
+            cs_tag.id,
+            cs_tag.tag_name,
+            cs_tag.file_path
+        FROM
+          cs_hit_tag_relative
+          LEFT JOIN cs_tag
+            ON cs_hit_tag_relative.cs_tag_id = cs_tag.id
+        WHERE cs_hit_tag_relative.is_deleted = 0
+          AND cs_hit_tag_relative.cs_car_info_id = #{carId}
+          ORDER BY cs_hit_tag_relative.id DESC
+    </select>
+
+</mapper>

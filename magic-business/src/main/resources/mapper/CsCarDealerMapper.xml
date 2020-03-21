@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarDealerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarDealer">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="dealer_name" property="dealerName"/>
+        <result column="short_name" property="shortName"/>
+        <result column="address" property="address"/>
+        <result column="tel" property="tel"/>
+        <result column="contact_name" property="contactName"/>
+        <result column="sys_area_id" property="sysAreaId"/>
+        <result column="establish_time" property="establishTime"/>
+        <result column="licence_no" property="licenceNo"/>
+        <result column="status" property="status"/>
+        <result column="audit_detail" property="auditDetail"/>
+        <result column="credit_union" property="creditUnion"/>
+        <result column="sys_user_id" property="sysUserId"/>
+        <result column="fix_phone" property="fixPhone"/>
+        <result column="car_dearler_initial" property="carDearlerInitial"/>
+        <result column="car_dearler_pinyin" property="carDearlerPinyin"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_group" property="fileGroup"/>
+        <result column="file_path" property="filePath"/>
+        <result column="last_audit_time" property="lastAuditTime"/>
+        <result column="is_enabled" property="isEnabled"/>
+        <result column="card_front_file_name" property="cardFrontFileName"/>
+        <result column="card_front_file_group" property="cardFrontFileGroup"/>
+        <result column="card_front_file_path" property="cardFrontFilePath"/>
+        <result column="payment_type" property="paymentType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, dealer_name AS dealerName, short_name AS shortName, address AS address, tel AS tel, contact_name AS contactName, sys_area_id AS sysAreaId, establish_time AS establishTime, licence_no AS licenceNo, status AS status, audit_detail AS auditDetail, credit_union AS creditUnion, sys_user_id AS sysUserId, fix_phone AS fixPhone, car_dearler_initial AS carDearlerInitial, car_dearler_pinyin AS carDearlerPinyin, file_name AS fileName, file_group AS fileGroup, file_path AS filePath,last_audit_time AS lastAuditTime,is_enabled AS  isEnabled,
+        card_front_file_name AS cardFrontFileName,card_front_file_group AS cardFrontFileGroup,card_front_file_path AS cardFrontFilePath
+
+    </sql>
+    <select id="findCarDealerByPage" resultType="com.haoqi.magic.business.model.dto.CsCarDealerDTO">
+
+        SELECT
+        dealer.payment_type AS paymentType,
+        dealer.id AS id,
+        dealer.short_name AS shortName,
+        dealer.address AS address,
+        dealer.dealer_name AS dealerName,
+        dealer.establish_time AS establishTime,
+        dealer.contact_name AS contactName,
+        dealer.tel AS tel,
+        dealer.fix_phone AS fixPhone,
+        dealer.status AS status,
+        dealer.credit_union AS creditUnion,
+        dealer.gmt_create AS gmt_create,
+        dealer.last_audit_time,
+        dealer.is_enabled,
+        dealer.sys_area_id,
+        vip.is_show AS isShow,
+        vip.name AS vipName,
+        vip.period AS period,
+        vip.id AS vipId,
+        userVip.begin_date AS beginDate,
+        userVip.id AS useVipId,
+        userVip.is_deleted AS useVipIsDeleted,
+        userVip.expired_date AS expiredDate,
+        vip.type AS vipType,
+        dealer.sys_user_id AS userId
+
+        FROM
+        cs_car_dealer dealer
+        LEFT JOIN cs_user_vip userVip ON userVip.sys_user_id=dealer.sys_user_id
+        LEFT JOIN cs_vip  vip ON vip.id=userVip.cs_vip_id
+        WHERE
+
+        dealer.is_deleted = 0
+        <if test="shortName != null and shortName != ''">
+            AND dealer.short_name like CONCAT ('%',#{shortName},'%')
+        </if>
+        <if test="status != null">
+            AND dealer.status = #{status}
+        </if>
+        <if test="vipType != null">
+            AND vip.type = #{vipType}
+        </if>
+        <if test="vipPeriod != null">
+            AND vip.period = #{vipPeriod}
+        </if>
+        <if test="startLastAuditTime != null and startLastAuditTime != ''">
+            AND dealer.last_audit_time &gt;= #{startLastAuditTime}
+        </if>
+        <if test="endLastAuditTime != null and endLastAuditTime != ''">
+            AND dealer.last_audit_time &lt;= #{endLastAuditTime}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND dealer.gmt_create &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND dealer.gmt_create &lt;= #{endDate}
+        </if>
+        <if test="status ==0">
+            ORDER BY dealer.gmt_create ASC
+        </if>
+        <if test="status ==-1 or status ==1">
+            ORDER BY dealer.last_audit_time DESC
+        </if>
+
+
+    </select>
+
+    <!--获取全部车商信息-->
+    <select id="getAllCarDealer" resultType="com.haoqi.magic.business.model.dto.CsCarDealerDTO">
+        SELECT
+        id,
+        short_name,
+        dealer_name,
+        is_enabled
+
+        FROM
+        cs_car_dealer
+        WHERE is_deleted = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="areaId != null">
+            AND sys_area_id = #{areaId}
+        </if>
+        <if test="shortName != null">
+            AND short_name like CONCAT ('%',#{shortName},'%')
+        </if>
+        <if test="dealerStatus != null">
+            AND status = #{dealerStatus}
+        </if>
+        <if test="isEnabled != null">
+            AND is_enabled = #{isEnabled}
+        </if>
+    </select>
+    <select id="findCarSellerByPage" resultType="com.haoqi.magic.business.model.dto.CsCarDealerDTO">
+        SELECT
+        dealer.payment_type AS paymentType,
+        dealer.id AS id,
+        dealer.short_name AS shortName,
+        dealer.address AS address,
+        dealer.dealer_name AS dealerName,
+        dealer.establish_time AS establishTime,
+        dealer.contact_name AS contactName,
+        dealer.tel AS tel,
+        dealer.fix_phone AS fixPhone,
+        dealer.status AS status,
+        dealer.credit_union AS creditUnion,
+        dealer.gmt_create AS gmt_create,
+        dealer.last_audit_time,
+        dealer.is_enabled,
+        dealer.sys_area_id
+        FROM
+        cs_car_dealer dealer
+
+        WHERE
+        dealer.is_deleted = 0
+
+        <if test="shortName != null and shortName != ''">
+            AND dealer.short_name like CONCAT ('%',#{shortName},'%')
+        </if>
+        <if test="status != null">
+            AND dealer.status = #{status}
+        </if>
+        <if test="startLastAuditTime != null and startLastAuditTime != ''">
+            AND dealer.last_audit_time &gt;= #{startLastAuditTime}
+        </if>
+        <if test="endLastAuditTime != null and endLastAuditTime != ''">
+            AND dealer.last_audit_time &lt;= #{endLastAuditTime}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND dealer.gmt_create &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND dealer.gmt_create &lt;= #{endDate}
+        </if>
+        ORDER BY dealer.gmt_create DESC
+
+
+
+    </select>
+
+</mapper>

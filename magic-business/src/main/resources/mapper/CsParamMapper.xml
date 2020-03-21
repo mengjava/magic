@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsParamMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsParam">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="param_name" property="paramName" />
+        <result column="min_price" property="minPrice" />
+        <result column="max_price" property="maxPrice" />
+        <result column="min_travel_distance" property="minTravelDistance" />
+        <result column="max_travel_distance" property="maxTravelDistance" />
+        <result column="car_age" property="carAge" />
+        <result column="car_type_code" property="carTypeCode" />
+        <result column="audit_time" property="auditTime" />
+        <result column="transfer_num" property="transferNum" />
+        <result column="credit_union" property="creditUnion" />
+        <result column="sql_str" property="sqlStr" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        param_name AS paramName,
+        min_price AS minPrice,
+        max_price AS maxPrice,
+        min_travel_distance AS minTravelDistance,
+        max_travel_distance AS maxTravelDistance,
+        car_age AS carAge,
+        car_type_code AS carTypeCode,
+        audit_time AS auditTime,
+        transfer_num AS transferNum,
+        credit_union AS creditUnion,
+        sql_str AS sqlStr
+    </sql>
+
+    <!--分页获取自定义参数数据-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.entity.CsParam">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            cs_param
+        WHERE is_deleted = 0
+        <if test="paramName != null">
+            AND param_name LIKE CONCAT ('%',#{paramName},'%')
+        </if>
+        <if test="minPriceStart != null">
+            AND min_price &gt;= #{minPriceStart}
+        </if>
+
+        <if test="minPriceEnd != null">
+            AND min_price &lt;= #{minPriceEnd}
+        </if>
+
+        <if test="maxPriceStart != null">
+            AND max_price &gt;= #{maxPriceStart}
+        </if>
+
+        <if test="maxPriceEnd != null">
+            AND max_price &lt;= #{maxPriceEnd}
+        </if>
+
+        <if test="minTravelDistanceStart != null">
+            AND min_travel_distance &gt;= #{minTravelDistanceStart}
+        </if>
+
+        <if test="minTravelDistanceEnd != null">
+            AND min_travel_distance &lt;= #{minTravelDistanceEnd}
+        </if>
+
+        <if test="maxTravelDistanceStart != null">
+            AND max_travel_distance &gt;= #{maxTravelDistanceStart}
+        </if>
+
+        <if test="maxTravelDistanceEnd != null">
+            AND max_travel_distance &lt;= #{maxTravelDistanceEnd}
+        </if>
+
+        <if test="carAge != null">
+            AND car_age = #{carAge}
+        </if>
+
+        <if test="carTypeCode != null">
+            AND car_type_code = #{carTypeCode}
+        </if>
+
+
+        <if test="auditTime != null">
+            AND audit_time = #{auditTime}
+        </if>
+
+        <if test="transferNum != null">
+            AND transfer_num = #{transferNum}
+        </if>
+
+        <if test="creditUnion != null">
+            AND credit_union = #{creditUnion}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysCarModelMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysCarModel">
+        <id column="id" property="id" />
+        <result column="comp_id" property="compId" />
+        <result column="comp_name" property="compName" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="brand_id" property="brandId" />
+        <result column="brand_name" property="brandName" />
+        <result column="series_id" property="seriesId" />
+        <result column="series_name" property="seriesName" />
+        <result column="series_group_name" property="seriesGroupName" />
+        <result column="model_id" property="modelId" />
+        <result column="model_name" property="modelName" />
+        <result column="price" property="price" />
+        <result column="liter" property="liter" />
+        <result column="gear_type" property="gearType" />
+        <result column="model_year" property="modelYear" />
+        <result column="maker_type" property="makerType" />
+        <result column="discharge_standard" property="dischargeStandard" />
+        <result column="seat_number" property="seatNumber" />
+        <result column="min_reg_year" property="minRegYear" />
+        <result column="max_reg_year" property="maxRegYear" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, comp_id AS compId, comp_name AS compName, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, brand_id AS brandId, brand_name AS brandName, series_id AS seriesId, series_name AS seriesName, series_group_name AS seriesGroupName, model_id AS modelId, model_name AS modelName, price AS price, liter AS liter, gear_type AS gearType, model_year AS modelYear, maker_type AS makerType, discharge_standard AS dischargeStandard, seat_number AS seatNumber, min_reg_year AS minRegYear, max_reg_year AS maxRegYear
+    </sql>
+    <select id="selectCarModelPage" resultType="com.haoqi.magic.system.model.entity.SysCarModel">
+        SELECT
+            id,
+            brand_id,
+            brand_name,
+            series_id,
+            series_name,
+            model_id,
+            model_name,
+            price,
+            liter,
+            gear_type,
+            model_year,
+            discharge_standard,
+            seat_number,
+            min_reg_year,
+            max_reg_year,
+            is_deleted
+        FROM
+            sys_car_model
+        WHERE
+            1 = 1
+        <if test="seriesId != null">
+            AND series_id = #{seriesId}
+        </if>
+        <if test="modelName != null">
+            AND model_name like CONCAT('%',#{modelName},'%')
+        </if>
+    </select>
+    <select id="selectCarModelListBySeriesId" resultType="com.haoqi.magic.system.model.entity.SysCarModel">
+        SELECT
+        m.brand_id,
+        m.brand_name,
+        m.series_id,
+        m.series_name,
+        m.model_id,
+        m.model_name,
+        m.discharge_standard,
+        m.maker_type,
+        m.gear_type,
+        m.price
+        FROM
+        sys_car_model m
+        WHERE m.is_deleted = 0
+        AND m.series_id = #{seriesId}
+        ORDER BY  m.model_year ASC ,m.model_id ASC
+    </select>
+</mapper>

@@ -1,0 +1,11 @@
+---
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${SERVER_ADDR:115.29.5.170:8840}
+        namespace: b47f432f-4469-437b-bfde-09a5b9192b1c
+      discovery:
+        server-addr: ${SERVER_ADDR:115.29.5.170:8840}
+        namespace: b47f432f-4469-437b-bfde-09a5b9192b1c
+

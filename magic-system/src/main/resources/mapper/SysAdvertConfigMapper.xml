@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysAdvertConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysAdvertConfig">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="title" property="title" />
+        <result column="position_code" property="positionCode" />
+        <result column="picture_path" property="picturePath" />
+        <result column="picture_name" property="pictureName" />
+        <result column="link_url" property="linkUrl" />
+        <result column="sort" property="sort" />
+        <result column="status" property="status" />
+        <result column="jump_type" property="jumpType" />
+        <result column="content" property="content" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,  creator AS creator, modifier AS modifier, is_deleted AS isDeleted, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, title AS title, position_code AS positionCode, picture_path AS picturePath, picture_name AS pictureName, link_url AS linkUrl,  sort AS sort, status AS status, jump_type AS jumpType, content AS content
+    </sql>
+    <select id="findAdvertByPage" resultType="com.haoqi.magic.system.model.dto.SysAdvertDTO">
+        select
+                id            AS id,
+                title         AS title,
+                link_url      AS linkUrl,
+                picture_path  AS picturePath,
+                picture_name  AS pictureName,
+                sort          AS sort,
+                status        AS status,
+                position_code AS positionCode,
+                jump_type AS jumpType,
+                gmt_modified  AS gmtModified
+        FROM sys_advert_config
+        WHERE
+         is_deleted = 0
+        <if test="title != null">
+            AND title like CONCAT ('%',#{title},'%')
+        </if>
+        <if test="positionCode != null and positionCode !=''">
+            AND position_code = #{positionCode}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+      ORDER BY  gmt_modified DESC
+    </select>
+
+</mapper>

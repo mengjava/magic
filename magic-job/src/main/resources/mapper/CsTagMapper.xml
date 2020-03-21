@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.job.mapper.CsTagMapper">
+
+    <!--根据类型获取对应的标签以及关联的自定义参数-->
+    <select id="getAllDetailTag" resultType="com.haoqi.magic.job.model.dto.TagParamDTO">
+        SELECT
+          ct.id AS tagId,
+          ct.tag_name AS tagName,
+          ct.cs_param_id AS paramId,
+          cp.sql_str AS sqlStr
+        FROM cs_tag ct
+        LEFT JOIN cs_param cp ON(ct.cs_param_id = cp.id AND cp.is_deleted = 0)
+        WHERE ct.is_deleted = 0
+        <if test="tagType != null">
+            AND ct.type =#{tagType}
+        </if>
+    </select>
+</mapper>

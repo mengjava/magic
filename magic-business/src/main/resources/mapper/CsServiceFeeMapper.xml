@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsServiceFeeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsServiceFee">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="sys_area_id" property="sysAreaId" />
+        <result column="min_money" property="minMoney" />
+        <result column="max_money" property="maxMoney" />
+        <result column="fee_ratio" property="feeRatio" />
+        <result column="fee_money" property="feeMoney" />
+        <result column="type" property="type" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, sys_area_id AS sysAreaId, min_money AS minMoney, max_money AS maxMoney, fee_ratio AS feeRatio, fee_money AS feeMoney, type AS type
+    </sql>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.dto.CsServiceFeeDTO">
+         SELECT
+            area.city_name,
+            area.province_name,
+            area.province_code,
+            fee.sys_area_id,
+            fee.gmt_modified
+        FROM
+            cs_service_fee fee
+        LEFT JOIN sys_area area ON area.id = fee.sys_area_id
+        GROUP BY fee.sys_area_id
+    </select>
+
+</mapper>

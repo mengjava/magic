@@ -1,0 +1,34 @@
+server:
+  port: 13005
+
+spring:
+  application:
+    name: magic-gateway
+    route: magic-route
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+    nacos:
+      config:
+        file-extension: yaml
+  profiles:
+    active: ${ACTIVE_PROFILES:dev}
+
+
+feign:
+  httpclient:
+    connection-timeout: 6000
+ribbon:
+  ReadTimeout: 16000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

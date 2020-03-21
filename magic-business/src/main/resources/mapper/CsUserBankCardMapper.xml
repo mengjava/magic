@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsUserBankCardMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsUserBankCard">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="sys_user_id" property="sysUserId" />
+        <result column="bank_code" property="bankCode" />
+        <result column="bank_name" property="bankName" />
+        <result column="bank_card_no" property="bankCardNo" />
+        <result column="bank_user_name" property="bankUserName" />
+        <result column="bank_user_tel" property="bankUserTel" />
+        <result column="bank_user_card_no" property="bankUserCardNo" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, sys_user_id AS sysUserId, bank_code AS bankCode, bank_name AS bankName, bank_card_no AS bankCardNo, bank_user_name AS bankUserName, bank_user_tel AS bankUserTel, bank_user_card_no AS bankUserCardNo
+    </sql>
+
+</mapper>

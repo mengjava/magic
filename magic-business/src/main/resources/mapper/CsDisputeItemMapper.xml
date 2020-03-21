@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsDisputeItemMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsDisputeItem">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="item_name" property="itemName"/>
+        <result column="type" property="type"/>
+        <result column="text_flag" property="textFlag"/>
+        <result column="recheck_flag" property="recheckFlag"/>
+        <result column="parent_id" property="parentId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, item_name AS itemName, type AS type, text_flag AS textFlag, recheck_flag AS recheckFlag, parent_id AS parentId
+    </sql>
+    <select id="selectPageByParam" resultType="com.haoqi.magic.business.model.dto.CsDisputeItemDTO">
+        SELECT
+        id AS id,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        item_name AS itemName,
+        type AS type,
+        text_flag AS textFlag,
+        recheck_flag AS recheckFlag,
+        parent_id AS parentId
+        FROM
+        cs_dispute_item
+        WHERE 1 = 1
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="recheckFlag != null">
+            AND recheck_flag = #{recheckFlag}
+        </if>
+        <if test="isDeleted != null">
+            AND is_deleted = #{isDeleted}
+        </if>
+    </select>
+    <select id="selectListByParam" resultType="com.haoqi.magic.business.model.dto.CsDisputeItemDTO">
+        SELECT
+        id AS id,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        item_name AS itemName,
+        type AS type,
+        text_flag AS textFlag,
+        recheck_flag AS recheckFlag,
+        parent_id AS parentId
+        FROM
+        cs_dispute_item
+        WHERE is_deleted = 0
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="recheckFlag != null">
+            AND recheck_flag = #{recheckFlag}
+        </if>
+    </select>
+    <delete id="deleteByIdAndParentId">
+        DELETE
+        FROM
+          cs_dispute_item
+        WHERE (id = #{id}
+            OR parent_id = #{id})
+    </delete>
+</mapper>

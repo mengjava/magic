@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsUserVipMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsUserVip">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="sys_user_id" property="sysUserId"/>
+        <result column="cs_vip_id" property="csVipId"/>
+        <result column="money" property="money"/>
+        <result column="expired_date" property="expiredDate"/>
+        <result column="username" property="username"/>
+        <result column="begin_date" property="beginDate"/>
+        <result column="vip_no" property="vipNo"/>
+        <result column="maintenance_free_num" property="maintenanceFreeNum"/>
+        <result column="emission_free_num" property="emissionFreeNum"/>
+        <result column="insurance_free_num" property="insuranceFreeNum"/>
+        <result column="car_model_free_num" property="carModelFreeNum"/>
+        <result column="evaluate_free_num" property="evaluateFreeNum"/>
+        <result column="maintenance_price" property="maintenancePrice"/>
+        <result column="emission_price" property="emissionPrice"/>
+        <result column="insurance_price" property="insurancePrice"/>
+        <result column="car_model_price" property="carModelPrice"/>
+        <result column="evaluate_price" property="evaluatePrice"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, sys_user_id AS sysUserId, cs_vip_id AS csVipId, money AS money, expired_date AS expiredDate, username AS username, begin_date AS beginDate, vip_no AS vipNo, maintenance_free_num AS maintenanceFreeNum, emission_free_num AS emissionFreeNum, insurance_free_num AS insuranceFreeNum, car_model_free_num AS carModelFreeNum, evaluate_free_num AS evaluateFreeNum, maintenance_price AS maintenancePrice, emission_price AS emissionPrice, insurance_price AS insurancePrice, car_model_price AS carModelPrice, evaluate_price AS evaluatePrice
+    </sql>
+
+
+    <!--获取有效的用户会员卡信息-->
+    <select id="getEnableUserVipByUserId" resultType="com.haoqi.magic.business.model.dto.UserVipDTO">
+        SELECT
+        id,
+        maintenance_free_num , emission_free_num , insurance_free_num , car_model_free_num , evaluate_free_num ,
+        maintenance_price , emission_price , insurance_price , car_model_price , evaluate_price
+
+        FROM cs_user_vip
+        WHERE 1=1
+        AND is_deleted = 0
+        AND expired_date >= DATE_FORMAT(now(),'%Y-%m-%d')
+        AND sys_user_id = #{userId}
+    </select>
+    <select id="selectNoVipByUserId" resultType="com.haoqi.magic.business.model.entity.CsUserVip">
+      SELECT
+           vip.id
+        FROM
+            cs_user_vip userVip
+            LEFT JOIN cs_vip vip ON vip.id = userVip.cs_vip_id
+        WHERE
+            vip.type = 1
+            AND userVip.sys_user_id=#{id}
+
+    </select>
+
+</mapper>

@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarInfo">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_car_dealer_id" property="csCarDealerId"/>
+        <result column="sys_car_model_id" property="sysCarModelId"/>
+        <result column="car_no" property="carNo"/>
+        <result column="sys_car_model_name" property="sysCarModelName"/>
+        <result column="sys_car_brand_name" property="sysCarBrandName"/>
+        <result column="sys_car_series_name" property="sysCarSeriesName"/>
+        <result column="vin" property="vin"/>
+        <result column="init_date" property="initDate"/>
+        <result column="use_type" property="useType"/>
+        <result column="travel_distance" property="travelDistance"/>
+        <result column="instrument_show_distance" property="instrumentShowDistance"/>
+        <result column="product_date" property="productDate"/>
+        <result column="locate" property="locate"/>
+        <result column="register_locate" property="registerLocate"/>
+        <result column="plate_no" property="plateNo"/>
+        <result column="emission_standard_code" property="emissionStandardCode"/>
+        <result column="car_factory" property="carFactory"/>
+        <result column="displacement" property="displacement"/>
+        <result column="gear_box_code" property="gearBoxCode"/>
+        <result column="car_type_code" property="carTypeCode"/>
+        <result column="drive_method_code" property="driveMethodCode"/>
+        <result column="fuel_type_code" property="fuelTypeCode"/>
+        <result column="color_code" property="colorCode"/>
+        <result column="seat_num" property="seatNum"/>
+        <result column="tyre_type" property="tyreType"/>
+        <result column="car_version" property="carVersion"/>
+        <result column="engine_no" property="engineNo"/>
+        <result column="transfer_num" property="transferNum"/>
+        <result column="transfer_type" property="transferType"/>
+        <result column="belong_to" property="belongTo"/>
+        <result column="import_type" property="importType"/>
+        <result column="spare_wheel" property="spareWheel"/>
+        <result column="price" property="price"/>
+        <result column="suggest_price" property="suggestPrice"/>
+        <result column="wholesale_price" property="wholesalePrice"/>
+        <result column="have_fixed_price" property="haveFixedPrice"/>
+        <result column="have_promote_price" property="havePromotePrice"/>
+        <result column="buyer_info" property="buyerInfo"/>
+        <result column="seller_info" property="sellerInfo"/>
+        <result column="other_info" property="otherInfo"/>
+        <result column="publish_status" property="publishStatus"/>
+        <result column="transfer_status" property="transferStatus"/>
+        <result column="scan_num" property="scanNum"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="pull_off_time" property="pullOffTime"/>
+        <result column="scan_base_num" property="scanBaseNum"/>
+        <result column="icon_file_name" property="iconFileName"/>
+        <result column="icon_file_group" property="iconFileGroup"/>
+        <result column="icon_file_path" property="iconFilePath"/>
+        <result column="check_time" property="checkTime"/>
+        <result column="check_user_id" property="checkUserId"/>
+        <result column="check_login_name" property="checkLoginName"/>
+        <result column="displacement_type" property="displacementType"/>
+        <result column="transfer_handle_time" property="transferHandleTime"/>
+        <result column="trade_flag" property="tradeFlag"/>
+        <result column="car_trunk_type" property="carTrunkType"/>
+        <result column="car_model_file_name" property="carModelFileName"/>
+        <result column="car_model_file_group" property="carModelFileGroup"/>
+        <result column="car_model_file_path" property="carModelFilePath"/>
+        <result column="maintenance_url" property="maintenanceUrl"/>
+        <result column="insurance_url" property="insuranceUrl"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_dealer_id AS csCarDealerId, sys_car_model_id AS sysCarModelId, car_no AS carNo, sys_car_model_name AS sysCarModelName, sys_car_brand_name AS sysCarBrandName, sys_car_series_name AS sysCarSeriesName, vin AS vin, init_date AS initDate, use_type AS useType, travel_distance AS travelDistance, instrument_show_distance AS instrumentShowDistance, product_date AS productDate, locate AS locate, register_locate AS registerLocate, plate_no AS plateNo, emission_standard_code AS emissionStandardCode, car_factory AS carFactory, displacement AS displacement, gear_box_code AS gearBoxCode, car_type_code AS carTypeCode, drive_method_code AS driveMethodCode, fuel_type_code AS fuelTypeCode, color_code AS colorCode, seat_num AS seatNum, tyre_type AS tyreType, car_version AS carVersion, engine_no AS engineNo, transfer_num AS transferNum, transfer_type AS transferType, belong_to AS belongTo, import_type AS importType, spare_wheel AS spareWheel, price AS price, suggest_price AS suggestPrice, wholesale_price AS wholesalePrice, have_fixed_price AS haveFixedPrice, have_promote_price AS havePromotePrice, buyer_info AS buyerInfo, seller_info AS sellerInfo, other_info AS otherInfo, publish_status AS publishStatus, transfer_status AS transferStatus, scan_num AS scanNum, audit_time AS auditTime, publish_time AS publishTime, pull_off_time AS pullOffTime, scan_base_num AS scanBaseNum, icon_file_name AS iconFileName, icon_file_group AS iconFileGroup,
+         icon_file_path AS iconFilePath, check_time AS checkTime,check_user_id AS checkUserId, check_login_name AS checkLoginName, displacement_type AS displacementType, transfer_handle_time AS transferHandleTime,trade_flag AS tradeFlag, car_trunk_type AS carTrunkType ,car_model_file_name AS carModelFileName,car_model_file_group AS carModelFileGroup,car_model_file_path AS carModelFilePath
+    </sql>
+    <!--修改车辆所属车商-->
+    <update id="changeCarDearler">
+        UPDATE cs_car_info
+        SET
+            check_time = NULL,
+            check_user_id = NULL,
+            check_login_name = NULL,
+            gmt_modified = now()
+            <if test="publishStatus != null">
+                ,publish_status = #{publishStatus}
+            </if>
+
+            <if test="transferStatus != null">
+                ,transfer_status = #{transferStatus}
+            </if>
+
+            <if test="csCarDealerId != null">
+                ,cs_car_dealer_id = #{csCarDealerId}
+            </if>
+        WHERE is_deleted = 0 AND id = #{id}
+    </update>
+
+    <!--分页获取车辆信息-->
+    <select id="findByPage" resultType="com.haoqi.magic.business.model.dto.CarDTO">
+        SELECT
+        id,
+        gmt_create,
+        gmt_modified,
+        car_no,
+        cs_car_dealer_id,
+        sys_car_model_id,
+        sys_car_model_name,
+        sys_car_brand_name,
+        sys_car_series_name,
+        use_type,
+        vin,
+        init_date,
+        product_date,
+        travel_distance,
+        instrument_show_distance,
+        locate,
+        register_locate,
+        plate_no,
+        emission_standard_code,
+        car_factory,
+        transfer_num,
+        displacement,
+        gear_box_code,
+        car_type_code,
+        drive_method_code,
+        fuel_type_code,
+        color_code,
+        seat_num,
+        tyre_type,
+        car_version,
+        engine_no,
+        belong_to,
+        transfer_type,
+        import_type,
+        spare_wheel,
+        price,
+        suggest_price,
+        wholesale_price,
+        have_fixed_price,
+        have_promote_price,
+        publish_status,
+        audit_time,
+        publish_time,
+        pull_off_time,
+        buyer_info,
+        seller_info,
+        icon_file_path,
+        check_user_id,
+        check_login_name,
+        other_info,
+        displacement_type,
+        trade_flag,
+        car_trunk_type
+
+        FROM cs_car_info
+        WHERE 1=1
+        AND is_deleted = 0
+        <if test="publishStatus != null">
+            AND publish_status = #{publishStatus}
+        </if>
+        <if test="transferStatus != null">
+            AND transfer_status = #{transferStatus}
+        </if>
+        <if test="vin != null and vin != ''">
+            AND vin LIKE CONCAT ('%',#{vin},'%')
+        </if>
+        <if test="carNo != null and carNo != ''">
+            AND car_no LIKE CONCAT ('%',#{carNo},'%')
+        </if>
+        <if test="carBrand != null and carBrand != ''">
+            AND match(sys_car_brand_name) against (#{carBrand})
+        </if>
+        <if test="sysCarModelName != null and sysCarModelName != ''">
+            AND match(sys_car_model_name) against (#{sysCarModelName})
+        </if>
+        <if test="carDealerId != null">
+            AND cs_car_dealer_id = #{carDealerId}
+        </if>
+        <if test="locate != null and locate != ''">
+            AND locate = #{locate}
+        </if>
+        <if test="checkUserId != null">
+            AND check_user_id = #{checkUserId}
+        </if>
+        <if test="startDisplacement != null and startDisplacement != ''">
+            AND displacement >= #{startDisplacement}
+        </if>
+        <if test="endDisplacement != null and endDisplacement != ''">
+            AND  #{endDisplacement} >= displacement
+        </if>
+        <if test="gearBoxCode != null and gearBoxCode != ''">
+            AND gear_box_code = #{gearBoxCode}
+        </if>
+        <if test="emissionStandardCode != null and emissionStandardCode != ''">
+            AND emission_standard_code = #{emissionStandardCode}
+        </if>
+        <if test="colorCode != null and colorCode != ''">
+            AND color_code = #{colorCode}
+        </if>
+        <if test="startInitDate != null and startInitDate != ''">
+            AND init_date >= #{startInitDate}
+        </if>
+        <if test="endInitDate != null  and endInitDate != ''">
+            AND  #{endInitDate} >= init_date
+        </if>
+        <if test="startTravelDistance != null">
+            AND instrument_show_distance >= #{startTravelDistance}
+        </if>
+        <if test="endTravelDistance != null">
+            AND #{endTravelDistance} >= instrument_show_distance
+        </if>
+        <if test="startPrice != null">
+            AND price >= #{startPrice}
+        </if>
+        <if test="endPrice != null">
+            AND #{endPrice} >= price
+        </if>
+        <if test="startWholesalePrice != null">
+            AND wholesale_price >= #{startWholesalePrice}
+        </if>
+        <if test="endWholesalePrice != null">
+            AND #{endWholesalePrice} >= wholesale_price
+        </if>
+        <if test="displacementType != null and displacementType != ''">
+            AND  displacement_type = #{displacementType}
+        </if>
+        <if test="publishStatusList != null and publishStatusList.size > 0">
+            AND publish_status IN
+            <foreach collection="publishStatusList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <!--控制台-->
+    <select id="findConsoleByPage" resultType="com.haoqi.magic.business.model.dto.CsConsoleDTO">
+        SELECT
+        carinfo.id,
+        carinfo.car_no,
+        carinfo.vin,
+        carinfo.plate_no,
+        carinfo.sys_car_model_name,
+        carinfo.instrument_show_distance AS travelDistance,
+        carinfo.init_date,
+        carinfo.displacement,
+        carinfo.gear_box_code,
+        carinfo.emission_standard_code ,
+        carinfo.color_code ,
+        carinfo.price,
+        carinfo.suggest_price ,
+        carinfo.wholesale_price,
+        carinfo.cs_car_dealer_id ,
+        carinfo.publish_status ,
+        carinfo.check_user_id ,
+        carinfo.publish_time,
+        carinfo.audit_time,
+        carinfo.transfer_handle_time,
+        carinfo.displacement_type
+
+
+        FROM cs_car_info carinfo
+        LEFT JOIN cs_car_audit audit ON  audit.cs_car_info_id=carinfo.id
+        WHERE
+        carinfo.is_deleted = 0
+        AND carinfo.publish_status != 0
+        <if test="carNo != null and carNo != ''">
+            AND carinfo.car_no LIKE CONCAT ('%',#{carNo},'%')
+        </if>
+        <if test="plateNo != null and plateNo != ''">
+            AND carinfo.plate_no LIKE CONCAT ('%',#{plateNo},'%')
+        </if>
+        <if test="vin != null and vin != ''">
+            AND carinfo.vin LIKE CONCAT ('%',#{vin},'%')
+        </if>
+        <if test="sysCarModelName != null and sysCarModelName != ''">
+            AND carinfo.sys_car_model_name LIKE CONCAT ('%',#{sysCarModelName},'%')
+        </if>
+
+        <if test="startTravelDistance != null">
+            AND carinfo.instrument_show_distance >= #{startTravelDistance}
+        </if>
+        <if test="endTravelDistance != null">
+            AND #{endTravelDistance} >= carinfo.instrument_show_distance
+        </if>
+
+        <if test="startDisplacement != null">
+            AND carinfo.displacement >= #{startDisplacement}
+        </if>
+        <if test="endDisplacement != null">
+            AND  #{endDisplacement} >= carinfo.displacement
+        </if>
+        <if test="displacementType != null and  displacementType != ''">
+            AND  #{displacementType} = carinfo.displacement_type
+        </if>
+
+        <if test="gearBoxCode != null">
+            AND carinfo.gear_box_code = #{gearBoxCode}
+        </if>
+
+        <if test="emissionStandardCode != null">
+            AND carinfo.emission_standard_code = #{emissionStandardCode}
+        </if>
+
+        <if test="colorCode != null">
+            AND carinfo.color_code = #{colorCode}
+        </if>
+
+        <if test="startPrice != null">
+            AND carinfo.price >= #{startPrice}
+        </if>
+        <if test="endPrice != null">
+            AND #{endPrice} >= carinfo.price
+        </if>
+
+        <if test="startWholesalePrice != null">
+            AND carinfo.wholesale_price >= #{startWholesalePrice}
+        </if>
+        <if test="endWholesalePrice != null">
+            AND #{endWholesalePrice} >= carinfo.wholesale_price
+        </if>
+
+
+        <if test="publishStatus != null">
+            AND carinfo.publish_status = #{publishStatus}
+        </if>
+
+        <if test="carDealerId != null">
+            AND carinfo.cs_car_dealer_id = #{carDealerId}
+        </if>
+
+        <if test="displacementType != null">
+            AND  carinfo.displacement_type = #{displacementType}
+        </if>
+
+        <if test="checkUserId != null">
+            AND  carinfo.check_user_id = #{checkUserId}
+        </if>
+        <if test="auditUserId != null">
+            AND  audit.audit_user_id = #{auditUserId}
+        </if>
+
+        <if test="transferHandleStartDate != null and transferHandleStartDate != ''">
+            AND carinfo.transfer_handle_time  &gt; #{transferHandleStartDate}
+        </if>
+        <if test="transferHandleEndDate != null and transferHandleEndDate != ''">
+            AND carinfo.transfer_handle_time  &lt; #{transferHandleEndDate}
+        </if>
+
+        <if test="auditStartDate != null and auditStartDate != ''">
+            AND carinfo.audit_time  &gt; #{auditStartDate}
+        </if>
+        <if test="auditEndDate != null and auditEndDate != ''">
+            AND carinfo.audit_time  &lt; #{auditEndDate}
+        </if>
+
+        <if test="publishStartDate != null and publishStartDate != ''">
+            AND carinfo.publish_time  &gt; #{publishStartDate}
+        </if>
+        <if test="publishEndDate != null and publishEndDate != ''">
+            AND carinfo.publish_time  &lt; #{publishEndDate}
+        </if>
+
+        GROUP BY carinfo.id
+
+    </select>
+
+    <!--通过自定义参数、车辆ID判断车辆是否命中标签-->
+    <select id="checkTagWithSqlStr" resultType="java.lang.Integer">
+        SELECT
+              COUNT(1)
+        FROM cs_car_info
+        LEFT JOIN cs_car_dealer ON(cs_car_info.cs_car_dealer_id = cs_car_dealer.id AND cs_car_dealer.is_deleted = 0)
+        WHERE cs_car_info.is_deleted = 0
+        AND cs_car_info.id = #{carId} ${sqlStr}
+    </select>
+
+    <!--通过条件查询车辆信息-->
+    <select id="getCarWithSqlStr" resultType="java.lang.Long">
+        SELECT
+              cs_car_info.id AS carId
+        FROM cs_car_info
+        LEFT JOIN cs_car_dealer ON(cs_car_info.cs_car_dealer_id = cs_car_dealer.id AND cs_car_dealer.is_deleted = 0)
+        WHERE cs_car_info.is_deleted = 0 ${sqlStr}
+        ORDER BY cs_car_info.id
+    </select>
+    <select id="selectTransferRecordPage"
+            resultType="com.haoqi.magic.business.model.dto.TransferRecordPageDTO">
+        SELECT
+        id,
+        gmt_create,
+        car_no,
+        cs_car_dealer_id,
+        sys_car_model_id,
+        sys_car_model_name,
+        sys_car_brand_name,
+        sys_car_series_name,
+        use_type,
+        vin,
+        init_date,
+        product_date,
+        travel_distance,
+        instrument_show_distance,
+        LOCATE,
+        register_locate,
+        plate_no,
+        emission_standard_code,
+        displacement,
+        gear_box_code,
+        car_type_code,
+        drive_method_code,
+        fuel_type_code,
+        color_code,
+        car_version,
+        engine_no,
+        transfer_type,
+        spare_wheel,
+        price,
+        suggest_price,
+        wholesale_price,
+        have_fixed_price,
+        have_promote_price,
+        publish_status,
+        audit_time,
+        publish_time,
+        pull_off_time,
+        seller_info,
+        check_user_id,
+        check_login_name,
+        displacement_type,
+        transfer_handle_time
+
+        FROM cs_car_info
+        WHERE is_deleted = 0
+        AND publish_status = 3
+        AND transfer_status = 2
+        <if test="carNo != null and carNo != ''">
+            AND car_no LIKE CONCAT ('%',#{carNo},'%')
+        </if>
+        <if test="plateNo != null and plateNo != ''">
+            AND plate_no LIKE CONCAT ('%',#{plateNo},'%')
+        </if>
+        <if test="vin != null and vin != ''">
+            AND vin LIKE CONCAT ('%',#{vin},'%')
+        </if>
+        <if test="sysCarModelName != null and sysCarModelName != ''">
+            AND sys_car_model_name LIKE CONCAT ('%',#{sysCarModelName},'%')
+        </if>
+
+        <if test="startTravelDistance != null">
+            AND instrument_show_distance >= #{startTravelDistance}
+        </if>
+        <if test="endTravelDistance != null">
+            AND #{endTravelDistance} >= instrument_show_distance
+        </if>
+
+        <if test="startDisplacement != null">
+            AND displacement >= #{startDisplacement}
+        </if>
+        <if test="endDisplacement != null">
+            AND  #{endDisplacement} >= displacement
+        </if>
+        <if test="displacementType != null and  displacementType != ''">
+            AND  #{displacementType} = displacement_type
+        </if>
+
+        <if test="gearBoxCode != null and  gearBoxCode != ''">
+            AND gear_box_code = #{gearBoxCode}
+        </if>
+
+        <if test="emissionStandardCode != null and  emissionStandardCode != ''">
+            AND emission_standard_code = #{emissionStandardCode}
+        </if>
+
+        <if test="colorCode != null and  colorCode != ''">
+            AND color_code = #{colorCode}
+        </if>
+
+        <if test="startPrice != null">
+            AND price >= #{startPrice}
+        </if>
+        <if test="endPrice != null">
+            AND #{endPrice} >= price
+        </if>
+
+        <if test="startWholesalePrice != null">
+            AND wholesale_price >= #{startWholesalePrice}
+        </if>
+        <if test="endWholesalePrice != null">
+            AND #{endWholesalePrice} >= wholesale_price
+        </if>
+        <if test="publishStatus != null">
+            AND publish_status = #{publishStatus}
+        </if>
+
+        <if test="carDealerId != null">
+            AND cs_car_dealer_id = #{carDealerId}
+        </if>
+        <if test="initStartDate != null and initStartDate != ''">
+            AND init_date  &gt; #{initStartDate}
+        </if>
+        <if test="initEndDate != null and initEndDate != ''">
+            AND init_date  &lt; #{initEndDate}
+        </if>
+        <if test="transferStartDate != null and transferStartDate != ''">
+            AND transfer_handle_time  &gt; #{transferStartDate}
+        </if>
+        <if test="transferEndDate != null and transferEndDate != ''">
+            AND transfer_handle_time  &lt; #{transferEndDate}
+        </if>
+        <if test="displacementType != null">
+            AND displacement_type = #{displacementType}
+        </if>
+
+    </select>
+
+    <update id="updateScanNum">
+        UPDATE
+          cs_car_info
+        SET
+          scan_num = scan_num + 1
+        WHERE id = #{carId}
+    </update>
+</mapper>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysRole">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, role_name AS roleName, role_code AS roleCode
+    </sql>
+
+    <!--通过角色ID，获取角色-->
+    <select id="getRoleByRoleId" resultType="com.haoqi.magic.system.model.dto.RoleDTO">
+        SELECT
+        id,
+        role_name,
+        role_code
+
+        FROM sys_role
+        WHERE is_deleted = 0
+        AND id = #{roleId}
+    </select>
+
+    <!--获取角色列表信息-->
+    <select id="findRoleList" resultType="com.haoqi.magic.system.model.dto.RoleDTO">
+        SELECT
+        id,
+        role_name,
+        role_code
+        FROM sys_role
+        WHERE is_deleted = 0
+    </select>
+
+    <!--分页查询角色列表含有部门信息-->
+    <select id="findRoleByPage" resultType="com.haoqi.magic.system.model.dto.RoleDTO">
+        SELECT
+        r.id,
+        r.gmt_create,
+        r.role_name,
+        r.role_code
+        FROM sys_role r
+        WHERE r.is_deleted = 0
+    </select>
+
+</mapper>

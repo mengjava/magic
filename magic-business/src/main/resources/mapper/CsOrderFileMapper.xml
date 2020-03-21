@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsOrderFileMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsOrderFile">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_car_order_id" property="csCarOrderId"/>
+        <result column="type" property="type"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_group" property="fileGroup"/>
+        <result column="file_path" property="filePath"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_order_id AS csCarOrderId, type AS type, file_name AS fileName, file_group AS fileGroup, file_path AS filePath
+    </sql>
+    <select id="selectOrderFilePage" resultType="com.haoqi.magic.business.model.dto.CsOrderFileDTO">
+        SELECT
+        id AS id,
+        gmt_create AS gmtCreate,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        cs_car_order_id AS csCarOrderId,
+        type AS type,
+        file_name AS fileName,
+        file_group AS fileGroup,
+        file_path AS filePath
+        FROM
+        cs_order_file
+        WHERE is_deleted = 0
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="csCarOrderId != null">
+            AND cs_car_order_id = #{csCarOrderId}
+        </if>
+    </select>
+    <select id="selectOrderFile" resultType="com.haoqi.magic.business.model.entity.CsOrderFile">
+        SELECT
+        id AS id,
+        gmt_create AS gmtCreate,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        cs_car_order_id AS csCarOrderId,
+        type AS type,
+        file_name AS fileName,
+        file_group AS fileGroup,
+        file_path AS filePath
+        FROM
+        cs_order_file
+        WHERE is_deleted = 0
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="csCarOrderId != null">
+            AND cs_car_order_id = #{csCarOrderId}
+        </if>
+    </select>
+
+</mapper>

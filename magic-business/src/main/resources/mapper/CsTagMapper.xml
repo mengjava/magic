@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsTagMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsTag">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="type" property="type"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="cs_param_id" property="csParamId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_group" property="fileGroup"/>
+        <result column="file_path" property="filePath"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        type AS type,
+        tag_name AS tagName,
+        cs_param_id AS csParamId,
+        order_no AS orderNo,
+        file_name AS fileName,
+        file_group AS fileGroup,
+        file_path AS filePath
+    </sql>
+
+    <!--分页获取标签封装数据-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.entity.CsTag">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        cs_tag
+        WHERE is_deleted = 0
+        <if test="tagName != null">
+            AND tag_name LIKE CONCAT ('%',#{tagName},'%')
+        </if>
+        <if test="type != null">
+            AND type =#{type}
+        </if>
+        ORDER by type ASC,order_no ASC
+    </select>
+
+    <!--通过条件获取标签封装数据-->
+    <select id="getCsTagWithCondition" resultType="com.haoqi.magic.business.model.entity.CsTag">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        cs_tag
+        WHERE is_deleted = 0
+        <if test="tagName != null">
+            AND tag_name LIKE CONCAT ('%',#{tagName},'%')
+        </if>
+        <if test="type != null">
+            AND type =#{type}
+        </if>
+        <if test="csParamId != null">
+            AND cs_param_id =#{csParamId}
+        </if>
+        ORDER by type ASC,order_no ASC
+    </select>
+    <select id="selectCsSqlStrByTagId" resultType="java.lang.String">
+        SELECT
+          cs_param.sql_str
+        FROM
+          cs_tag
+          LEFT JOIN cs_param
+            ON cs_tag.cs_param_id = cs_param.id
+        WHERE cs_tag.is_deleted = 0
+          AND cs_param.is_deleted = 0
+          AND cs_tag.id = #{id}
+    </select>
+
+    <!--根据位置获取对应的标签以及自定义参数-->
+    <select id="getAllDetailTag" resultType="com.haoqi.magic.business.model.dto.CsTagParamDTO">
+        SELECT
+        ct.id AS tagId,
+        ct.tag_name AS tagName,
+        ct.cs_param_id AS paramId,
+        cp.sql_str AS sqlStr
+        FROM cs_tag ct
+        LEFT JOIN cs_param cp ON(ct.cs_param_id = cp.id AND cp.is_deleted = 0)
+        WHERE ct.is_deleted = 0
+        <if test="tagType != null">
+            AND ct.type =#{tagType}
+        </if>
+    </select>
+
+</mapper>

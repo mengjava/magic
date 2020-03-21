@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCustomBuiltMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCustomBuilt">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="sys_car_brand_id" property="sysCarBrandId" />
+        <result column="sys_car_brand_name" property="sysCarBrandName" />
+        <result column="age" property="age" />
+        <result column="color_code" property="colorCode" />
+        <result column="min_price" property="minPrice" />
+        <result column="max_price" property="maxPrice" />
+        <result column="emission_standard_code" property="emissionStandardCode" />
+        <result column="travel_distance" property="travelDistance" />
+        <result column="cs_car_dealer_id" property="csCarDealerId" />
+        <result column="custom_built_time" property="customBuiltTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        sys_car_brand_id AS sysCarBrandId,
+        sys_car_brand_name AS sysCarBrandName,
+        age AS age, color_code AS colorCode,
+        min_price AS minPrice,
+        max_price AS maxPrice,
+        emission_standard_code AS emissionStandardCode,
+        travel_distance AS travelDistance,
+        cs_car_dealer_id AS csCarDealerId,
+        custom_built_time AS customBuiltTime
+    </sql>
+
+    <!--通过ID更新定制信息-->
+    <update id="updateCsLoanCreditById">
+        UPDATE cs_custom_built
+        <set>
+            gmt_modified = now()
+            <if test="creator != null">
+                ,modifier = #{creator}
+            </if>
+            <if test="sysCarBrandId != null">
+                ,sys_car_brand_id = #{sysCarBrandId}
+            </if>
+            <if test="sysCarBrandName != null">
+                ,sys_car_brand_name = #{sysCarBrandName}
+            </if>
+            <if test="age != null">
+                ,age = #{age}
+            </if>
+            <if test="colorCode != null">
+                ,color_code = #{colorCode}
+            </if>
+            <if test="minPrice != null">
+                ,min_price = #{minPrice}
+            </if>
+            <if test="maxPrice != null">
+                ,max_price = #{maxPrice}
+            </if>
+            <if test="emissionStandardCode != null">
+                ,emission_standard_code = #{emissionStandardCode}
+            </if>
+            <if test="travelDistance != null">
+                ,travel_distance = #{travelDistance}
+            </if>
+        </set>
+        WHERE is_deleted = 0
+        AND id = #{id}
+        AND cs_car_dealer_id = #{csCarDealerId}
+    </update>
+
+    <!--分页获取定制信息-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CsCustomBuiltDTO">
+        SELECT
+            ccb.id AS id,
+            ccb.creator AS creator,
+            ccb.modifier AS modifier,
+            ccb.gmt_create AS gmtCreate,
+            ccb.gmt_modified AS gmtModified,
+            ccb.remark AS remark,
+            ccb.is_deleted AS isDeleted,
+            ccb.sys_car_brand_id AS sysCarBrandId,
+            ccb.sys_car_brand_name AS sysCarBrandName,
+            ccb.age AS age, color_code AS colorCode,
+            ccb.min_price AS minPrice,
+            ccb.max_price AS maxPrice,
+            ccb.emission_standard_code AS emissionStandardCode,
+            ccb.travel_distance AS travelDistance,
+            ccb.cs_car_dealer_id AS csCarDealerId,
+            ccb.custom_built_time AS customBuiltTime,
+            ccd.dealer_name AS dealerName,
+            ccd.contact_name AS contactName,
+            ccd.tel AS tel
+        FROM
+            cs_custom_built ccb
+        LEFT JOIN cs_car_dealer ccd  ON (ccb.cs_car_dealer_id = ccd.id)
+        WHERE ccb.is_deleted = 0
+
+        <if test="csCarDealerId != null">
+            AND ccb.cs_car_dealer_id = #{csCarDealerId}
+        </if>
+
+        <if test="dealerName != null">
+            AND ccd.dealer_name LIKE CONCAT('%', #{dealerName},'%')
+        </if>
+
+        <if test="sysCarBrandId != null">
+            AND ccb.sys_car_brand_id = #{sysCarBrandId}
+        </if>
+
+        <if test="applyTimeStart != null">
+            AND ccb.custom_built_time &gt;= #{applyTimeStart}
+        </if>
+
+        <if test="applyTimeEnd != null">
+            AND ccb.custom_built_time &lt;= #{applyTimeEnd}
+        </if>
+
+        <if test="sysCarBrandName != null and sysCarBrandName != ''">
+            AND ccb.sys_car_brand_name  LIKE CONCAT ('%',#{sysCarBrandName},'%')
+        </if>
+
+        ORDER BY ccb.custom_built_time DESC
+    </select>
+
+</mapper>

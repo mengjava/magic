@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarOrder">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_car_info_id" property="csCarInfoId"/>
+        <result column="status" property="status"/>
+        <result column="payment_status" property="paymentStatus"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="payment_delay" property="paymentDelay"/>
+        <result column="transfer_status" property="transferStatus"/>
+        <result column="transfer_time" property="transferTime"/>
+        <result column="transfer_remark" property="transferRemark"/>
+        <result column="transfer_apply_user" property="transferApplyUser"/>
+        <result column="transfer_apply_time" property="transferApplyTime"/>
+        <result column="transfer_delay" property="transferDelay"/>
+        <result column="cancel_buy_apply_time" property="cancelBuyApplyTime"/>
+        <result column="cancel_buy_apply_reason" property="cancelBuyApplyReason"/>
+        <result column="same_city_flag" property="sameCityFlag"/>
+        <result column="recheck_apply_user" property="recheckApplyUser"/>
+        <result column="recheck_apply_time" property="recheckApplyTime"/>
+        <result column="recheck_type" property="recheckType"/>
+        <result column="recheck_flag" property="recheckFlag"/>
+        <result column="recheck_result" property="recheckResult"/>
+        <result column="recheck_status" property="recheckStatus"/>
+        <result column="recheck_time" property="recheckTime"/>
+        <result column="recheck_user_id" property="recheckUserId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="sys_car_model_name" property="sysCarModelName"/>
+        <result column="sys_car_brand_name" property="sysCarBrandName"/>
+        <result column="sys_car_series_name" property="sysCarSeriesName"/>
+        <result column="color" property="color"/>
+        <result column="sal_price" property="salPrice"/>
+        <result column="service_fee" property="serviceFee"/>
+        <result column="vin" property="vin"/>
+        <result column="locate" property="locate"/>
+        <result column="plate_no_short_name" property="plateNoShortName"/>
+        <result column="init_date" property="initDate"/>
+        <result column="displacement" property="displacement"/>
+        <result column="emission_standard" property="emissionStandard"/>
+        <result column="gear_box" property="gearBox"/>
+        <result column="instrument_show_distance" property="instrumentShowDistance"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="sys_car_dealer_id" property="sysCarDealerId"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="car_dealer_name" property="carDealerName"/>
+        <result column="car_dealer_user" property="carDealerUser"/>
+        <result column="car_dealer_user_id" property="carDealerUserId"/>
+        <result column="car_dealer_user_tel" property="carDealerUserTel"/>
+        <result column="car_dealer_frozen_money" property="carDealerFrozenMoney"/>
+        <result column="buyer_frozen_money" property="buyerFrozenMoney"/>
+        <result column="buyer_user_id" property="buyerUserId"/>
+        <result column="buyer_name" property="buyerName"/>
+        <result column="buyer_tel" property="buyerTel"/>
+        <result column="checker_name" property="checkerName"/>
+        <result column="audit_name" property="auditName"/>
+        <result column="audit_remark" property="auditRemark"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="sell_time" property="sellTime"/>
+        <result column="refuse_sell_time" property="refuseSellTime"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="dispute_apply_user" property="disputeApplyUser"/>
+        <result column="dispute_apply_time" property="disputeApplyTime"/>
+        <result column="dispute_flag" property="disputeFlag"/>
+        <result column="dispute_remark" property="disputeRemark"/>
+        <result column="dispute_additional" property="disputeAdditional"/>
+        <result column="dispute_additional_user" property="disputeAdditionalUser"/>
+        <result column="dispute_additional_user_id" property="disputeAdditionalUserId"/>
+        <result column="dispute_additional_time" property="disputeAdditionalTime"/>
+        <result column="dispute_process_type" property="disputeProcessType"/>
+        <result column="maintenance_url" property="maintenanceUrl"/>
+        <result column="insurance_url" property="insuranceUrl"/>
+        <result column="operationing_user" property="operationingUser"/>
+        <result column="operationing_time" property="operationingTime"/>
+        <result column="compensate_money" property="compensateMoney"/>
+        <result column="recheck_user_name" property="recheckUserName"/>
+        <result column="dispute_process_time" property="disputeProcessTime"/>
+        <result column="dispute_audit_status" property="disputeAuditStatus"/>
+        <result column="displacement_type" property="displacementType"/>
+        <result column="dispute_process_user" property="disputeProcessUser"/>
+        <result column="dispute_process_user_id" property="disputeProcessUserId"/>
+    </resultMap>
+
+    <update id="updatePayMoneyOverTimeOrder">
+            UPDATE cs_car_order car
+        SET car.payment_delay = 1
+            WHERE
+                TIMESTAMPDIFF(
+                    DAY,
+                    car.sell_time,
+                    NOW()
+                ) > #{payMoneyOverTime}
+    </update>
+
+    <update id="updateTransferOverTimeOrder">
+       UPDATE cs_car_order car
+        SET car.transfer_delay = 1
+            WHERE
+                TIMESTAMPDIFF(
+                    DAY,
+                    car.transfer_apply_time,
+                    NOW()
+                ) > #{transferOverTime}
+
+    </update>
+
+    <!-- 通用查询结果列 -->
+    <select id="selectBuyerOrderCount" resultType="com.haoqi.magic.business.model.dto.AppBuyerCountDTO">
+        SELECT
+          COUNT(IF(status IN (1,4), TRUE, NULL)) AS buyCount,
+          COUNT(IF(same_city_flag = 0 AND status = 13,TRUE,NULL)) AS waitPayCount,
+          COUNT(IF(status IN (16,19,22),TRUE,NULL)) AS transferCount,
+          COUNT(IF(status = 25, TRUE, NULL)) AS completeCount,
+          COUNT(IF(dispute_flag = 1, TRUE, NULL)) AS disputeCount,
+          COUNT(IF(status IN (7, 10), TRUE, NULL)) AS cancelCount
+        FROM
+          cs_car_order
+        WHERE is_deleted = 0
+          AND buyer_user_id = #{userId}
+    </select>
+    <select id="selectSellerOrderCount" resultType="com.haoqi.magic.business.model.dto.AppSellerCountDTO">
+        SELECT
+          COUNT(IF(a.status IN (1,4), TRUE, NULL)) AS waitSellCount,
+          COUNT(IF(((d.payment_type = 1 AND a.status = 22) OR (d.payment_type = 0 AND a.status = 16)),TRUE,NULL)) AS waitTransferCount,
+          COUNT(IF(((d.payment_type = 1 AND a.status = 16) OR (d.payment_type = 0 AND a.status = 19)), TRUE, NULL)) AS waitReceiveCount,
+          COUNT(IF((a.same_city_flag = 0 AND a.status = 25) OR (a.same_city_flag = 1 AND a.status = 13),TRUE,NULL)) AS completeCount,
+          COUNT(IF(a.dispute_flag = 1, TRUE, NULL)) AS disputeCount,
+          COUNT(IF(a.status IN (7, 10), TRUE, NULL)) AS cancelCount
+        FROM
+          cs_car_order a LEFT JOIN cs_car_dealer d ON a.sys_car_dealer_id = d.id
+        WHERE a.is_deleted = 0
+          AND a.car_dealer_user_id = #{userId}
+    </select>
+
+    <!--订单分页列表-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CarOrderDTO">
+        SELECT
+        a.id,a.order_no,a.vin,a.sys_car_model_name,a.status,a.color,a.sal_price,a.plate_no_short_name,a.init_date,
+        a.displacement,a.emission_standard,a.gear_box,a.instrument_show_distance,a.publish_time,a.cancel_buy_apply_time,
+        a.gmt_create as buyTime,a.dispute_flag,a.recheck_flag,a.transfer_status,a.car_dealer_name,a.car_dealer_user,
+        a.car_dealer_user_tel,a.buyer_name,a.buyer_tel,a.checker_name,a.audit_name,a.audit_time,a.sell_time,a.refuse_sell_time,
+        a.transfer_delay,a.payment_delay,a.operationing_user,a.recheck_result,a.recheck_time,a.recheck_apply_time,a.finish_time,
+        a.dispute_apply_time,a.dispute_process_type,a.transfer_apply_time,a.sys_car_dealer_id,a.payment_status,
+        a.cancel_buy_apply_reason,a.displacement_type,a.cs_car_info_id,a.city,a.service_fee,a.dispute_process_time,
+        a.dispute_process_user,a.recheck_status,
+        b.cancel_buy_audit_audit_remark,b.cancel_buy_audit_audit_time,b.transfer_audit_status,b.transfer_audit_time,
+        b.dispute_first_audit_time,b.dispute_first_audit_status,b.dispute_first_audit_user,b.dispute_finish_audit_time,
+        b.dispute_finish_audit_status,b.dispute_finish_audit_user,b.cancel_buy_audit_status,b.transfer_audit_user,
+        c.trade_flag,c.publish_status,c.car_no
+
+        FROM cs_car_order a
+        LEFT JOIN cs_order_audit b ON a.id = b.cs_car_order_id
+        LEFT JOIN cs_car_info c ON c.id = a.cs_car_info_id
+        WHERE 1=1
+        AND a.is_deleted = 0
+        <if test="isDisputeManage != null">
+            AND (a.recheck_flag = 0 or (a.recheck_flag = 1 AND a.recheck_status = 1))
+        </if>
+        <if test="status != null">
+            AND a.status = #{status}
+        </if>
+        <if test="sameCityFlag !=null">
+            AND a.same_city_flag = #{sameCityFlag}
+        </if>
+        <if test="transferStatus != null">
+            AND a.transfer_status = #{transferStatus}
+        </if>
+        <if test="paymentStatus != null">
+            AND a.payment_status = #{paymentStatus}
+        </if>
+        <if test="disputeFlag != null">
+            AND a.dispute_flag = #{disputeFlag}
+        </if>
+        <if test="transferDelay != null">
+            AND a.transfer_delay = #{transferDelay}
+        </if>
+        <if test="paymentDelay != null">
+            AND a.payment_delay = #{paymentDelay}
+        </if>
+        <if test="disputeProcessType != null">
+            AND a.dispute_process_type = #{disputeProcessType}
+        </if>
+        <if test="transferStatus != null">
+            AND a.transfer_status = #{transferStatus}
+        </if>
+        <if test="recheckStatus != null">
+            AND a.recheck_status = #{recheckStatus}
+        </if>
+        <if test="recheckResult != null">
+            AND a.recheck_result = #{recheckResult}
+        </if>
+        <if test="recheckType != null">
+            AND a.recheck_type = #{recheckType}
+        </if>
+        <if test="recheckFlag != null">
+            AND a.recheck_flag = #{recheckFlag}
+        </if>
+        <if test="cancelBuyAuditStatus != null">
+            AND b.cancel_buy_audit_status = #{cancelBuyAuditStatus}
+        </if>
+        <if test="province != null and province != ''">
+            AND a.province = #{province}
+        </if>
+        <if test="gearBox != null and gearBox != ''">
+            AND a.gear_box = #{gearBox}
+        </if>
+        <if test="vin != null and vin != ''">
+            AND a.vin = #{vin}
+        </if>
+        <if test="emissionStandard != null and emissionStandard != ''">
+            AND a.emission_standard = #{emissionStandard}
+        </if>
+        <if test="plateNoShortName != null and plateNoShortName != ''">
+            AND a.plate_no_short_name = #{plateNoShortName}
+        </if>
+        <if test="sysCarModelName != null">
+            AND a.sys_car_model_name LIKE CONCAT('%',#{sysCarModelName},'%')
+        </if>
+        <if test="city != null and city != ''">
+            AND a.city = #{city}
+        </if>
+        <if test="buyerTel != null and buyerTel != ''">
+            AND a.buyer_tel LIKE CONCAT('%',#{buyerTel},'%')
+        </if>
+        <if test="carDealerUserTel != null and carDealerUserTel != ''">
+            AND a.car_dealer_user_tel  LIKE CONCAT('%',#{carDealerUserTel},'%')
+        </if>
+        <if test="carDealerName != null and carDealerName != ''">
+            AND a.car_dealer_name  LIKE CONCAT('%',#{carDealerName},'%')
+        </if>
+        <if test="keyWord != null and keyWord != ''">
+            AND a.sys_car_model_name  LIKE CONCAT('%',#{keyWord},'%')
+        </if>
+        <if test="disputeFlagList != null &amp;&amp; disputeFlagList.size() > 0">
+            AND a.dispute_flag IN
+            <foreach collection="disputeFlagList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="transferStatusList != null &amp;&amp; transferStatusList.size() > 0">
+            AND a.transfer_status IN
+            <foreach collection="transferStatusList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="statusList != null &amp;&amp; statusList.size() > 0">
+            AND a.status IN
+            <foreach collection="statusList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="recheckTypeList != null &amp;&amp; recheckTypeList.size() > 0">
+            AND a.recheck_type IN
+            <foreach collection="recheckTypeList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="buyerUserId != null">
+            AND a.buyer_user_id = #{buyerUserId}
+        </if>
+        <if test="carDealerUserId != null">
+            AND a.car_dealer_user_id = #{carDealerUserId}
+        </if>
+        <if test="initDateStart != null and initDateStart != ''">
+            AND a.init_date >= #{initDateStart}
+        </if>
+        <if test="initDateEnd != null and initDateEnd != ''">
+            AND a.init_date &lt;= #{initDateEnd}
+        </if>
+        <if test="sellTimeStart != null and sellTimeStart != ''">
+            AND a.sell_time >= #{sellTimeStart}
+        </if>
+        <if test="sellTimeEnd != null and sellTimeEnd != ''">
+            AND a.sell_time &lt;= #{sellTimeEnd}
+        </if>
+        <if test="buyTimeStart != null and buyTimeStart != ''">
+            AND a.gmt_create >= #{buyTimeStart}
+        </if>
+        <if test="buyTimeEnd != null and buyTimeEnd != ''">
+            AND a.gmt_create &lt;= #{buyTimeEnd}
+        </if>
+        <if test="recheckTimeStart != null and recheckTimeStart != ''">
+            AND a.recheck_time >= #{recheckTimeStart}
+        </if>
+        <if test="recheckTimeEnd != null and recheckTimeEnd != ''">
+            AND a.recheck_time &lt;= #{recheckTimeEnd}
+        </if>
+        <if test="recheckApplyTimeStart != null and recheckApplyTimeStart != ''">
+            AND a.recheck_apply_time >= #{recheckApplyTimeStart}
+        </if>
+        <if test="recheckApplyTimeEnd != null and recheckApplyTimeEnd != ''">
+            AND a.recheck_apply_time &lt;= #{recheckApplyTimeEnd}
+        </if>
+        <if test="disputeApplyTimeStart != null and disputeApplyTimeStart != ''">
+            AND a.dispute_apply_time >= #{disputeApplyTimeStart}
+        </if>
+        <if test="disputeApplyTimeEnd != null and disputeApplyTimeEnd != ''">
+            AND a.dispute_apply_time &lt;= #{disputeApplyTimeEnd}
+        </if>
+        <if test="transferApplyTimeStart != null and transferApplyTimeStart != ''">
+            AND a.transfer_apply_time >= #{transferApplyTimeStart}
+        </if>
+        <if test="transferApplyTimeEnd != null and transferApplyTimeEnd != ''">
+            AND a.transfer_apply_time &lt;= #{transferApplyTimeEnd}
+        </if>
+        <if test="cancelBuyApplyTimeStart != null and cancelBuyApplyTimeStart != ''">
+            AND a.cancel_buy_apply_time >= #{cancelBuyApplyTimeStart}
+        </if>
+        <if test="cancelBuyApplyTimeEnd != null and cancelBuyApplyTimeEnd != ''">
+            AND a.cancel_buy_apply_time &lt;= #{cancelBuyApplyTimeEnd}
+        </if>
+
+        <if test="salPriceStart != null">
+            AND a.sal_price >= #{salPriceStart}
+        </if>
+        <if test="salPriceEnd != null">
+            AND a.sal_price &lt;= #{salPriceEnd}
+        </if>
+        <if test="mileageNumberStart != null and mileageNumberStart != ''">
+            AND a.instrument_show_distance >= #{mileageNumberStart}
+        </if>
+        <if test="mileageNumberEnd != null and mileageNumberEnd != ''">
+            AND a.instrument_show_distance &lt;= #{mileageNumberEnd}
+        </if>
+        <if test="disputeProcessTimeStart != null and disputeProcessTimeStart != ''">
+            AND a.dispute_process_time >= #{disputeProcessTimeStart}
+        </if>
+        <if test="disputeProcessTimeEnd != null and disputeProcessTimeEnd != ''">
+            AND a.dispute_process_time &lt;= #{disputeProcessTimeEnd}
+        </if>
+
+        <if test="transferAuditTimeStart != null and transferAuditTimeStart != ''">
+            AND b.transfer_audit_time >= #{transferAuditTimeStart}
+        </if>
+        <if test="transferAuditTimeEnd != null and transferAuditTimeEnd != ''">
+            AND b.transfer_audit_time &lt;= #{transferAuditTimeEnd}
+        </if>
+        <if test="disputeFirstAuditTimeStart != null and disputeFirstAuditTimeStart != ''">
+            AND b.dispute_first_audit_time >= #{disputeFirstAuditTimeStart}
+        </if>
+        <if test="disputeFirstAuditTimeEnd != null and disputeFirstAuditTimeEnd != ''">
+            AND b.dispute_first_audit_time &lt;= #{disputeFirstAuditTimeEnd}
+        </if>
+        <if test="disputeFinishAuditTimeStart != null and disputeFinishAuditTimeStart != ''">
+            AND b.dispute_finish_audit_time >= #{disputeFinishAuditTimeStart}
+        </if>
+        <if test="disputeFinishAuditTimeEnd != null and disputeFinishAuditTimeEnd != ''">
+            AND b.dispute_finish_audit_time &lt;= #{disputeFinishAuditTimeEnd}
+        </if>
+        <if test="cancelBuyAuditAuditTimeStart != null and cancelBuyAuditAuditTimeStart != ''">
+            AND b.cancel_buy_audit_audit_time >= #{cancelBuyAuditAuditTimeStart}
+        </if>
+        <if test="cancelBuyAuditAuditTimeEnd != null and cancelBuyAuditAuditTimeEnd != ''">
+            AND b.cancel_buy_audit_audit_time &lt;= #{cancelBuyAuditAuditTimeEnd}
+        </if>
+        <if test="disputeAuditStatus != null">
+            AND a.dispute_audit_status = #{disputeAuditStatus}
+        </if>
+        <if test="publishStatus != null">
+            AND c.publish_status = #{publishStatus}
+        </if>
+
+    </select>
+
+    <!--分页获取冻结车辆-->
+    <select id="freezingCar" resultType="com.haoqi.magic.business.model.dto.CarOrderDTO">
+        SELECT
+        id,sys_car_model_name,displacement,emission_standard,gear_box,instrument_show_distance,
+        status,color,sal_price,gmt_create as buyTime,city,buyer_user_id,cs_car_info_id,init_date
+
+        FROM cs_car_order
+        WHERE 1=1
+        AND is_deleted = 0
+        AND same_city_flag = 0
+        AND (buyer_user_id = #{userId} or car_dealer_user_id = #{userId})
+        AND status IN
+        <foreach collection="statusList" open="(" separator="," close=")" index="index" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--订单、审核详情信息-->
+    <select id="getOrderAuditInfo" resultType="com.haoqi.magic.business.model.dto.CarOrderDTO">
+        SELECT
+        a.id AS orderId,a.order_no,a.vin,a.sys_car_model_name,a.status,a.color,a.sal_price,a.plate_no_short_name,a.init_date,
+        a.displacement,a.emission_standard,a.gear_box,a.instrument_show_distance,a.publish_time,a.cancel_buy_apply_time,
+        a.gmt_create as buyTime,a.dispute_flag,a.recheck_flag,a.transfer_status,a.car_dealer_name,a.car_dealer_user,a.buyer_user_id,
+        a.car_dealer_user_tel,a.buyer_name,a.buyer_tel,a.checker_name,a.audit_name,a.audit_time,a.sell_time,a.cancel_buy_apply_reason,
+        a.transfer_delay,a.payment_delay,a.operationing_user,a.recheck_result,a.recheck_time,a.recheck_apply_time,
+        a.dispute_apply_time,a.dispute_process_type,a.transfer_apply_time,a.sys_car_dealer_id,a.payment_status,a.service_fee,
+        a.compensate_money,a.bank_name,a.bank_card_no,a.bank_user_name,a.displacement_type,a.transfer_time,a.transfer_remark,a.dispute_remark,
+        b.cancel_buy_audit_audit_remark,b.cancel_buy_audit_audit_time,b.transfer_audit_status,b.transfer_audit_time,
+        b.dispute_first_audit_time,b.dispute_first_audit_status,b.dispute_first_audit_user,b.dispute_finish_audit_time,
+        b.dispute_finish_audit_status,b.dispute_finish_audit_user,b.cancel_buy_audit_status,b.transfer_audit_user,
+        b.audit_json_content,b.dispute_audit_json_content,b.transfer_audit_remark,c.trade_flag,b.dispute_first_audit_remark
+
+        FROM cs_car_order a
+        LEFT JOIN cs_order_audit b ON a.id = b.cs_car_order_id
+        LEFT JOIN cs_car_info c ON c.id = a.cs_car_info_id
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.id = #{orderId}
+    </select>
+
+    <!--通过车辆id，获取订单、审核详情信息-->
+    <select id="getOrderAndAuditByOrderIdAndCarId" resultType="com.haoqi.magic.business.model.dto.CarOrderDTO">
+        SELECT
+        a.id AS orderId,a.order_no,a.vin,a.sys_car_model_name,a.status,a.color,a.sal_price,a.plate_no_short_name,a.init_date,
+        a.displacement,a.emission_standard,a.gear_box,a.instrument_show_distance,a.publish_time,a.cancel_buy_apply_time,
+        a.gmt_create as buyTime,a.dispute_flag,a.recheck_flag,a.transfer_status,a.car_dealer_name,a.car_dealer_user,
+        a.car_dealer_user_tel,a.buyer_name,a.buyer_tel,a.checker_name,a.audit_name,a.audit_time,a.sell_time,
+        a.transfer_delay,a.payment_delay,a.operationing_user,a.recheck_result,a.recheck_time,a.recheck_apply_time,
+        a.dispute_apply_time,a.dispute_process_type,a.transfer_apply_time,a.sys_car_dealer_id,a.payment_status,
+        a.compensate_money,a.bank_name,a.bank_card_no,a.bank_user_name,a.displacement_type,a.transfer_time,a.transfer_remark,
+        b.cancel_buy_audit_audit_remark,b.cancel_buy_audit_audit_time,b.transfer_audit_status,b.transfer_audit_time,
+        b.dispute_first_audit_time,b.dispute_first_audit_status,b.dispute_first_audit_user,b.dispute_finish_audit_time,
+        b.dispute_finish_audit_status,b.dispute_finish_audit_user,b.cancel_buy_audit_status,b.transfer_audit_user,
+        b.audit_json_content,b.dispute_audit_json_content
+
+        FROM cs_car_order a
+        LEFT JOIN cs_order_audit b ON a.id = b.cs_car_order_id
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.id = #{orderId}
+        AND a.cs_car_info_id = #{carId}
+    </select>
+
+    <!--换审核-->
+    <update id="changeAuditor">
+        UPDATE cs_car_order
+        SET operationing_user = "",operationing_time = NULL,gmt_modified = now()
+        WHERE 1=1
+        AND id IN
+        <foreach collection="ids" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+
+</mapper>

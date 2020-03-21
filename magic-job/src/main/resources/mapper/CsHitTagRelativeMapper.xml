@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.job.mapper.CsHitTagRelativeMapper">
+
+    <!--批量插入命中标签项-->
+    <insert id="insertHitTagRelative" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        cs_hit_tag_relative(
+        creator,
+        modifier,
+        gmt_create,
+        gmt_modified,
+        is_deleted,
+        cs_car_info_id,
+        cs_tag_id) VALUES
+        <foreach collection="cars" item="item" index="index" separator=",">
+            (1,
+            1,
+            now(),
+            now(),
+            0,
+            #{item.carId},
+            #{tagId}
+            )
+        </foreach>
+    </insert>
+
+
+    <!--删除标签命中项-->
+    <delete id="deleteOldHit">
+        DELETE FROM cs_hit_tag_relative
+        WHERE is_deleted = 0
+        AND cs_car_info_id IN
+        <foreach collection="cars" open="(" close=")" item="item" index="index" separator=",">
+            #{item.carId}
+        </foreach>
+    </delete>
+
+    <!--删除旧的车辆标签数据(前一天的跑批数据)-->
+    <delete id="deleteAllOld">
+        DELETE FROM cs_hit_tag_relative
+        WHERE is_deleted = 0
+        AND TIMESTAMPDIFF(HOUR,gmt_create,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')) >= 10
+    </delete>
+</mapper>

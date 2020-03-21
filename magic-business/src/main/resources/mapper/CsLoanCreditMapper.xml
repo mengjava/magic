@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsLoanCreditMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsLoanCredit">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="customer_name" property="customerName" />
+        <result column="customer_tel" property="customerTel" />
+        <result column="card_no" property="cardNo" />
+        <result column="sys_area_id" property="sysAreaId" />
+        <result column="sys_area_name" property="sysAreaName" />
+        <result column="work_code" property="workCode" />
+        <result column="income_code" property="incomeCode" />
+        <result column="cs_car_dealer_id" property="csCarDealerId" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        customer_name AS customerName,
+        customer_tel AS customerTel,
+        card_no AS cardNo,
+        sys_area_id AS sysAreaId,
+        sys_area_name AS sysAreaName,
+        work_code AS workCode,
+        income_code AS incomeCode,
+        cs_car_dealer_id AS csCarDealerId,
+        status AS status
+    </sql>
+
+    <!--通过ID、代理商ID更新分期数据-->
+    <update id="updateCsLoanCreditById">
+        UPDATE cs_loan_credit
+        <set>
+            gmt_modified = now()
+            <if test="creator != null">
+                ,modifier = #{creator}
+            </if>
+            <if test="customerName != null">
+                ,customer_name = #{customerName}
+            </if>
+            <if test="customerTel != null">
+                ,customer_tel = #{customerTel}
+            </if>
+            <if test="cardNo != null">
+                ,card_no = #{cardNo}
+            </if>
+            <if test="sysAreaId != null">
+                ,sys_area_id = #{sysAreaId}
+            </if>
+            <if test="sysAreaName != null">
+                ,sys_area_name = #{sysAreaName}
+            </if>
+            <if test="workCode != null">
+                ,work_code = #{workCode}
+            </if>
+            <if test="incomeCode != null">
+                ,income_code = #{incomeCode}
+            </if>
+            <if test="status != null">
+                ,status = #{status}
+            </if>
+        </set>
+        WHERE is_deleted = 0
+        AND id = #{id}
+        AND cs_car_dealer_id = #{csCarDealerId}
+    </update>
+
+    <!--分页获取分期数据-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CsLoanCreditDTO">
+        SELECT
+            ccb.id AS id,
+            ccb.creator AS creator,
+            ccb.modifier AS modifier,
+            ccb.gmt_create AS gmtCreate,
+            ccb.gmt_modified AS gmtModified,
+            ccb.remark AS remark,
+            ccb.is_deleted AS isDeleted,
+            ccb.customer_name AS customerName,
+            ccb.customer_tel AS customerTel,
+            ccb.card_no AS cardNo,
+            ccb.sys_area_id AS sysAreaId,
+            ccb.sys_area_name AS sysAreaName,
+            ccb.work_code AS workCode,
+            ccb.income_code AS incomeCode,
+            ccb.cs_car_dealer_id AS csCarDealerId,
+            ccb.status AS status,
+            ccd.dealer_name AS dealerName,
+            ccd.contact_name AS contactName,
+            ccd.tel AS tel
+        FROM
+              cs_loan_credit ccb
+        LEFT JOIN cs_car_dealer ccd  ON (ccb.cs_car_dealer_id = ccd.id)
+        WHERE ccb.is_deleted = 0
+
+        <if test="csCarDealerId != null">
+            AND ccb.cs_car_dealer_id = #{csCarDealerId}
+        </if>
+
+        <if test="dealerName != null">
+            AND ccd.dealer_name LIKE CONCAT('%', #{dealerName},'%')
+        </if>
+
+        <if test="keyWord != null">
+            AND (
+                      ccb.customer_name LIKE CONCAT ('%',#{keyWord},'%')
+                  OR ccb.customer_tel LIKE CONCAT ('%',#{keyWord},'%')
+                  OR ccb.card_no LIKE CONCAT ('%',#{keyWord},'%')
+                )
+        </if>
+
+        <if test="applyTimeStart != null">
+            AND ccb.gmt_create &gt;= #{applyTimeStart}
+        </if>
+
+        <if test="applyTimeEnd != null">
+            AND ccb.gmt_create &lt;= #{applyTimeEnd}
+        </if>
+        ORDER BY ccb.gmt_create DESC,ccb.status ASC
+    </select>
+
+</mapper>

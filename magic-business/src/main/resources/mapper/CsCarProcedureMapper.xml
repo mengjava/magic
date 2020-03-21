@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarProcedureMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarProcedure">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="have_register_card" property="haveRegisterCard" />
+        <result column="have_drive_card" property="haveDriveCard" />
+        <result column="valid_date" property="validDate" />
+        <result column="buy_bill" property="buyBill" />
+        <result column="transfer_bill" property="transferBill" />
+        <result column="tci_valid_date" property="tciValidDate" />
+        <result column="tci_position" property="tciPosition" />
+        <result column="have_vehicle_vessel_tax" property="haveVehicleVesselTax" />
+        <result column="have_purchase_tax" property="havePurchaseTax" />
+        <result column="have_name_plate" property="haveNamePlate" />
+        <result column="surface" property="surface" />
+        <result column="have_break_rule_record" property="haveBreakRuleRecord" />
+        <result column="have_spare_key" property="haveSpareKey" />
+        <result column="have_import_order" property="haveImportOrder" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, have_register_card AS haveRegisterCard, have_drive_card AS haveDriveCard, valid_date AS validDate, buy_bill AS buyBill, transfer_bill AS transferBill, tci_valid_date AS tciValidDate, tci_position AS tciPosition, have_vehicle_vessel_tax AS haveVehicleVesselTax, have_purchase_tax AS havePurchaseTax, have_name_plate AS haveNamePlate, surface AS surface, have_break_rule_record AS haveBreakRuleRecord, have_spare_key AS haveSpareKey, have_import_order AS haveImportOrder, cs_car_info_id AS csCarInfoId
+    </sql>
+
+</mapper>

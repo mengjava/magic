@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    ​
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <!-- Example for logging into the build folder of your project -->
+    <property name="LOG_FILE" value="${BUILD_FOLDER:-build}/${springAppName}"/>​
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${springAppName:-}) %clr([%X{user:-}]){yellow} %clr(${PID:- }){magenta} %clr(%line) %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <!-- Appender to log to console -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Appender to log to file in a JSON format -->
+    <appender name="logstashinfo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}-info.json</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}-info.json.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "timestamp": "%date{\"yyyy-MM-dd HH:mm:ss.SSS\"}",
+                        "username": "%X{user}",
+                        "log_level": "%level",
+                        "service": "${springAppName:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line_number": "%line",
+                        "stack_trace": "%exception{50}",
+                        "message": "%message{50}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="logstasherror" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}-error.json</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE}-error.json.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "timestamp": "%date{\"yyyy-MM-dd HH:mm:ss.SSS\"}",
+                        "username": "%X{user}",
+                        "log_level": "%level",
+                        "service": "${springAppName:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line_number": "%line",
+                        "stack_trace": "%exception{50}",
+                        "message": "%message{50}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+
+    <appender name="logstashTcp" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>192.168.0.19:5000</destination>
+        <queueSize>1125899906842624</queueSize>
+        <writeBufferSize>16384</writeBufferSize>
+        <keepAliveDuration>5 minutes</keepAliveDuration>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "timestamp": "%date{\"yyyy-MM-dd HH:mm:ss.SSS\"}",
+                        "username": "%X{user}",
+                        "log_level": "%level",
+                        "service": "${springAppName:-}",
+                        "pid": "${PID:-}",
+                        "thread": "%thread",
+                        "class": "%class",
+                        "line_number": "%line",
+                        "stack_trace": "%exception{50}",
+                        "message": "%message{50}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+    <springProfile name="test,dev">
+        <logger name="org.mybatis" level="info" />
+        <logger name="org.springframework" level="info" />
+        <logger name="com.haoqi" level="debug" />
+    </springProfile>
+    <!-- 生产环境. -->
+    <springProfile name="prod">
+        <logger name="com.haoqi" level="info" />
+    </springProfile>
+    ​
+    <root level="INFO">
+        <appender-ref ref="console"/>
+        <appender-ref ref="logstashinfo"/>
+        <appender-ref ref="logstashTcp"/>
+    </root>
+    <root level="ERROR">
+        <appender-ref ref="logstasherror"/>
+    </root>
+</configuration>

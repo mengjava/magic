@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsTransferRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsTransferRecord">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+        <result column="cs_car_dearler_id_from" property="csCarDearlerIdFrom" />
+        <result column="cs_car_dearler_name_from" property="csCarDearlerNameFrom" />
+        <result column="cs_car_dearler_name_to" property="csCarDearlerNameTo" />
+        <result column="cs_car_dearler_id_to" property="csCarDearlerIdTo" />
+        <result column="transfer_status" property="transferStatus" />
+        <result column="transfer_user_id" property="transferUserId" />
+        <result column="transfer_audit_user_id" property="transferAuditUserId" />
+        <result column="transfer_time" property="transferTime" />
+        <result column="transfer_audit_time" property="transferAuditTime" />
+        <result column="transfer_cancel_time" property="transferCancelTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        cs_car_info_id AS csCarInfoId,
+        cs_car_dearler_id_from AS csCarDearlerIdFrom,
+        cs_car_dearler_name_from AS csCarDearlerNameFrom,
+        cs_car_dearler_name_to AS csCarDearlerNameTo,
+        cs_car_dearler_id_to AS csCarDearlerIdTo,
+        transfer_status AS transferStatus,
+        transfer_user_id AS transferUserId,
+        transfer_audit_user_id AS transferAuditUserId,
+        transfer_time AS transferTime,
+        transfer_audit_time AS transferAuditTime,
+        transfer_cancel_time AS transferCancelTime
+    </sql>
+
+    <!--该车辆、该经销商、申请状态的数据全部设置为取消状态-->
+    <update id="updateOtherTransferTOCancel">
+        UPDATE cs_transfer_record
+        SET
+            gmt_modified = now(),
+            transfer_status = -1,
+            remark = #{remark},
+            transfer_cancel_time = now()
+            <if test="modifier != null">
+                ,modifier = #{modifier}
+            </if>
+        WHERE is_deleted= 0
+        AND transfer_status = #{transferStatus}
+        AND cs_car_info_id = #{csCarInfoId}
+        AND cs_car_dearler_id_from = #{csCarDearlerIdFrom}
+    </update>
+
+    <!--分页获取调拨数据-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CsTransferRecordDTO">
+        SELECT
+            ctr.id AS id,
+            cci.sys_car_model_name AS sysCarModelName,
+            cci.instrument_show_distance AS instrumentShowDistance,
+            cci.init_date AS initDate,
+            cci.displacement AS displacement,
+            cci.displacement_type AS displacementType,
+            cci.emission_standard_code AS emissionStandardCode,
+            cci.color_code AS colorCode,
+            cci.price AS price,
+            cci.wholesale_price AS wholesalePrice,
+            ctr.cs_car_info_id AS csCarInfoId,
+            ctr.cs_car_dearler_id_from AS csCarDearlerIdFrom,
+            ctr.cs_car_dearler_name_from AS csCarDearlerNameFrom,
+            ctr.cs_car_dearler_name_to AS csCarDearlerNameTo,
+            ctr.cs_car_dearler_id_to AS csCarDearlerIdTo,
+            ctr.transfer_time AS transferTime,
+            ctr.transfer_audit_time AS transferAuditTime,
+            ctr.transfer_status AS transferStatus,
+            cci.gear_box_code AS gearBoxCode,
+            cci.car_no AS carNo,
+            cci.publish_status AS publishStatus,
+        <choose>
+            <when test="tab == 1">
+                CASE ctr.transfer_status
+                WHEN  -1 THEN 1
+                WHEN  1 THEN 2
+                WHEN  -2 THEN 3
+                WHEN  2 THEN 4 ELSE 0 END AS orderNum
+            </when>
+            <when test="tab == 2">
+                CASE ctr.transfer_status
+                WHEN  1 THEN 1
+                WHEN  -1 THEN 2
+                WHEN  2 THEN 4 ELSE 0 END AS orderNum
+            </when>
+        </choose>
+
+
+        FROM
+            cs_transfer_record ctr
+        LEFT JOIN cs_car_info cci ON (ctr.cs_car_info_id = cci.id AND cci.is_deleted = 0)
+        WHERE ctr.is_deleted = 0
+        <if test="transferStatus != null">
+            AND ctr.transfer_status = #{transferStatus}
+        </if>
+
+        <if test="sysCarModelName != null">
+            AND cci.sys_car_model_name LIKE CONCAT('%',#{sysCarModelName},'%')
+        </if>
+
+        <if test="transferTimeStart != null">
+            AND ctr.transfer_time &gt;= #{transferTimeStart}
+        </if>
+
+        <if test="transferTimeEnd != null">
+            AND ctr.transfer_time &lt;= #{transferTimeEnd}
+        </if>
+
+        <if test="transferAuditTimeStart != null">
+            AND ctr.transfer_audit_time &gt;= #{transferAuditTimeStart}
+        </if>
+
+        <if test="transferAuditTimeEnd != null">
+            AND ctr.transfer_audit_time &lt;= #{transferAuditTimeEnd}
+        </if>
+
+        <choose>
+            <when test="tab == 1">
+                AND ctr.transfer_status IN(1,2,-1,-2)
+                AND ctr.cs_car_dearler_id_to = #{csCarDealerId}
+            </when>
+            <when test="tab == 2">
+                AND ctr.transfer_status IN(1,2,-1)
+                AND ctr.cs_car_dearler_id_from = #{csCarDealerId}
+            </when>
+        </choose>
+
+        <choose>
+            <when test="tab == 1">
+                ORDER BY orderNum ASC,ctr.transfer_audit_time ASC,ctr.transfer_time DESC,ctr.transfer_audit_time DESC
+            </when>
+            <when test="tab == 2">
+                ORDER BY orderNum ASC,ctr.transfer_time DESC,ctr.transfer_audit_time ASC,ctr.transfer_time DESC
+            </when>
+        </choose>
+    </select>
+
+    <!--通过ID获取调拨数据-->
+    <select id="getOneById" resultType="com.haoqi.magic.business.model.entity.CsTransferRecord">
+        SELECT
+              <include refid="Base_Column_List"/>
+        FROM  cs_transfer_record
+        WHERE     is_deleted = 0
+              AND id = #{id}
+              AND (
+                      cs_car_dearler_id_from = #{csCarDealerId}
+                   OR cs_car_dearler_id_to  = #{csCarDealerId}
+                  )
+
+    </select>
+
+    <!--根据条件获取调拨数据-->
+    <select id="getCsTransferRecordWithCondition"
+            resultType="com.haoqi.magic.business.model.entity.CsTransferRecord">
+        SELECT
+              <include refid="Base_Column_List"/>
+        FROM
+              cs_transfer_record
+        WHERE is_deleted = 0
+
+        <if test="creator != null">
+            AND creator = #{creator}
+        </if>
+
+        <if test="modifier != null">
+            AND modifier = #{modifier}
+        </if>
+
+        <if test="csCarInfoId != null">
+            AND cs_car_info_id = #{csCarInfoId}
+        </if>
+
+
+        <if test="csCarDearlerIdFrom != null">
+            AND cs_car_dearler_id_from = #{csCarDearlerIdFrom}
+        </if>
+
+
+        <if test="csCarDearlerIdTo != null">
+            AND cs_car_dearler_id_to = #{csCarDearlerIdTo}
+        </if>
+
+        <if test="transferStatus != null">
+            AND transfer_status = #{transferStatus}
+        </if>
+
+        <if test="transferUserId != null">
+            AND transfer_user_id = #{transferUserId}
+        </if>
+
+        <if test="transferAuditUserId != null">
+            AND transfer_audit_user_id = #{transferAuditUserId}
+        </if>
+
+    </select>
+
+</mapper>

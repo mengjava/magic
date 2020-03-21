@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysCarBrandMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysCarBrand">
+        <id column="id" property="id" />
+        <result column="comp_id" property="compId" />
+        <result column="comp_name" property="compName" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="brand_id" property="brandId" />
+        <result column="brand_name" property="brandName" />
+        <result column="brand_initial" property="brandInitial" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, comp_id AS compId, comp_name AS compName, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, brand_id AS brandId, brand_name AS brandName, brand_initial AS brandInitial
+    </sql>
+    <select id="selectCarBrandPage" resultType="com.haoqi.magic.system.model.entity.SysCarBrand">
+        SELECT
+            id,
+            brand_id,
+            brand_name,
+            is_deleted,
+            brand_initial
+        FROM
+            sys_car_brand
+        WHERE
+            1 = 1
+        <if test="brandName != null and brandName != '' ">
+            AND brand_name like CONCAT('%',#{brandName},'%')
+        </if>
+        <if test="brandInitial != null and brandInitial != ''">
+            AND brand_initial = #{brandInitial}
+        </if>
+    </select>
+    <select id="selectCarBrandList" resultType="com.haoqi.magic.system.model.entity.SysCarBrand">
+        SELECT
+        brand_id,
+        brand_name,
+        brand_initial
+        FROM
+        sys_car_brand
+        WHERE is_deleted = 0
+        ORDER BY brand_initial, brand_id ASC
+    </select>
+    <select id="selectMaxBrandId" resultType="java.lang.Integer">
+        SELECT MAX(brand_id) FROM sys_car_brand
+    </select>
+</mapper>

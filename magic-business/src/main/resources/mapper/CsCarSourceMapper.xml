@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarSourceMapper">
+
+
+    <!--分页获取车商的车源信息-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CsCarSourceDTO">
+
+        SELECT
+        id,
+        sys_car_model_name AS sysCarModelName,
+        instrument_show_distance AS instrumentShowDistance,
+        init_date AS initDate,
+        displacement,
+        displacement_type,
+        gear_box_code AS gearBoxCode,
+        emission_standard_code AS emissionStandardCode,
+        color_code AS colorCode,
+        price,
+        wholesale_price AS wholesalePrice,
+        suggest_price AS suggestPrice,
+        publish_status AS publishStatus,
+        publish_time AS publishTime,
+        audit_time AS auditTime,
+        car_no AS carNo,
+        CASE publish_status
+        WHEN 2 THEN 1
+        WHEN -1 THEN 2
+        WHEN 0 THEN 3
+        WHEN 3 THEN 4
+        WHEN -2 THEN 5
+        WHEN 1 THEN 6 ELSE 0 END AS orderNum
+        FROM cs_car_info
+        WHERE is_deleted = 0
+        AND cs_car_dealer_id = #{csCarDealerId}
+        <if test="sysCarModelName != null">
+            AND sys_car_model_name LIKE CONCAT('%',#{sysCarModelName},'%')
+        </if>
+        <if test="displacementStart != null">
+            AND displacement &gt;= #{displacementStart}
+        </if>
+
+        <if test="displacementEnd != null">
+            AND displacement &lt;= #{displacementEnd}
+        </if>
+        <if test="displacementType != null">
+            AND displacement_type = #{displacementType}
+        </if>
+        <if test="colorCode != null">
+            AND color_code = #{colorCode}
+        </if>
+        <if test="wholesalePriceStart != null">
+            AND wholesale_price &gt;= #{wholesalePriceStart}
+        </if>
+        <if test="wholesalePriceEnd != null">
+            AND wholesale_price &lt;= #{wholesalePriceEnd}
+        </if>
+
+        <if test="travelDistanceStart != null">
+            AND instrument_show_distance &gt;= #{travelDistanceStart}
+        </if>
+        <if test="travelDistanceEnd != null">
+            AND instrument_show_distance &lt;= #{travelDistanceEnd}
+        </if>
+
+
+        <if test="initDateStart != null">
+            AND init_date &gt;= #{initDateStart}
+        </if>
+        <if test="initDateEnd != null">
+            AND init_date &lt;= #{initDateEnd}
+        </if>
+
+
+        <if test="priceStart != null">
+            AND price &gt;= #{priceStart}
+        </if>
+        <if test="priceEnd != null">
+            AND price &lt;= #{priceEnd}
+        </if>
+
+
+        <if test="gearBoxCode != null">
+            AND gear_box_code = #{gearBoxCode}
+        </if>
+
+
+        <if test="emissionStandardCode != null">
+            AND emission_standard_code = #{emissionStandardCode}
+        </if>
+
+        <if test="publishStatus != null">
+            AND publish_status = #{publishStatus}
+        </if>
+        ORDER BY orderNum ASC,
+        audit_time DESC,
+        gmt_modified ASC,
+        gmt_modified DESC,
+        gmt_modified DESC,
+        pull_off_time DESC,
+        publish_time DESC
+    </select>
+</mapper>

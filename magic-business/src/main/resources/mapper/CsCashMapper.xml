@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCashMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCash">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="money" property="money"/>
+        <result column="cash_user" property="cashUser"/>
+        <result column="cash_user_id" property="cashUserId"/>
+        <result column="cash_audit_user_id" property="cashAuditUserId"/>
+        <result column="cash_audit_user" property="cashAuditUser"/>
+        <result column="cash_audit_time" property="cashAuditTime"/>
+        <result column="cash_audit_status" property="cashAuditStatus"/>
+        <result column="cash_audit_remark" property="cashAuditRemark"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_card_no" property="bankCardNo"/>
+        <result column="bank_user_name" property="bankUserName"/>
+        <result column="bank_user_tel" property="bankUserTel"/>
+        <result column="bank_user_card_no" property="bankUserCardNo"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, money AS money, cash_user AS cashUser, cash_user_id AS cashUserId, cash_audit_user_id AS cashAuditUserId, cash_audit_user AS cashAuditUser, cash_audit_time AS cashAuditTime, cash_audit_status AS cashAuditStatus, cash_audit_remark AS cashAuditRemark, bank_name AS bankName, bank_card_no AS bankCardNo, bank_user_name AS bankUserName, bank_user_tel AS bankUserTel, bank_user_card_no AS bankUserCardNo
+    </sql>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.vo.CsCashVO">
+        SELECT * FROM
+        cs_cash cash
+        WHERE cash.is_deleted = 0
+        <if test="cashUser != null and cashUser != '' ">
+            AND cash.cash_user = #{cashUser}
+        </if>
+        <if test="bankUserTel != null and bankUserTel != ''">
+            AND cash.bank_user_tel = #{bankUserTel}
+        </if>
+        <if test="bankUserName != null and bankUserName != ''">
+            AND cash.bank_user_name = #{bankUserName}
+        </if>
+        <if test="startMoney != null">
+            AND cash.money >= #{startMoney}
+        </if>
+        <if test="endMoney != null">
+            AND #{endMoney} >= cash.money
+        </if>
+        <if test="cashAuditStatus != null">
+            AND cash.cash_audit_status = #{cashAuditStatus}
+        </if>
+        <if test="startGmtCreate != null">
+            AND cash.gmt_modified = #{startGmtCreate}
+        </if>
+
+        <if test="endGmtCreate != null">
+            AND #{endGmtCreate} >= cash.gmt_modified
+        </if>
+        <if test="startCashAuditTime != null">
+            AND cash.cash_audit_time = #{startCashAuditTime}
+        </if>
+
+        <if test="endCashAuditTime != null">
+            AND #{endCashAuditTime} >= cash.cash_audit_time
+        </if>
+
+        <if test="date != null">
+            AND cash.gmt_create >= #{date}
+        </if>
+        <if test="userId != null">
+            ANd cash.cash_user_id = #{userId}
+        </if>
+        <if test="cashAuditStatus == 0">
+            ORDER BY cash.gmt_create
+        </if>
+        <if test="cashAuditStatus == 1">
+            ORDER BY cash.cash_audit_time DESC
+        </if>
+
+    </select>
+
+    <!--合计-->
+    <select id="totalAmount" resultType="java.math.BigDecimal">
+        SELECT SUM(cash.money)
+        FROM cs_cash cash
+        WHERE cash.is_deleted = 0
+        <if test="cashUser != null">
+            AND cash.cash_user = #{cashUser}
+        </if>
+        <if test="bankUserTel != null">
+            AND cash.bank_user_tel = #{bankUserTel}
+        </if>
+        <if test="bankUserName != null">
+            AND cash.bank_user_name = #{bankUserName}
+        </if>
+        <if test="startMoney != null">
+            AND cash.money >= #{startMoney}
+        </if>
+        <if test="endMoney != null">
+            AND #{endMoney} >= cash.money
+        </if>
+        <if test="cashAuditStatus != null">
+            AND cash.cash_audit_status = #{cashAuditStatus}
+        </if>
+        <if test="startGmtCreate != null">
+            AND cash.gmt_modified = #{startGmtCreate}
+        </if>
+
+        <if test="endGmtCreate != null">
+            AND #{endGmtCreate} >= cash.gmt_modified
+        </if>
+        <if test="startCashAuditTime != null">
+            AND cash.cash_audit_time = #{startCashAuditTime}
+        </if>
+
+        <if test="endCashAuditTime != null">
+            AND #{endCashAuditTime} >= cash.cash_audit_time
+        </if>
+
+        <if test="date != null">
+            AND cash.gmt_create >= #{date}
+        </if>
+        <if test="userId != null">
+            ANd cash.cash_user_id = #{userId}
+        </if>
+
+    </select>
+
+</mapper>

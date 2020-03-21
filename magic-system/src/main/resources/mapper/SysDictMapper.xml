@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.user.mapper.SysDictMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysDict">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="keyworld" property="keyworld" />
+        <result column="value_desc" property="valueDesc" />
+        <result column="parent_id" property="parentId" />
+        <result column="class_level" property="classLevel" />
+        <result column="class_order" property="classOrder" />
+        <result column="class" property="classType" />
+        <result column="class_flag" property="classFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, is_deleted AS isDeleted, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, keyworld AS keyworld, value_desc AS valueDesc, parent_id AS parentId, class_level AS classLevel, class_order AS classOrder, class AS classType, class_flag AS classFlag
+    </sql>
+
+</mapper>

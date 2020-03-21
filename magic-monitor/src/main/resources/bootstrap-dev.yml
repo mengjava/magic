@@ -1,0 +1,11 @@
+---
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: ${SERVER_ADDR:116.62.142.9:8840}
+        namespace: ccfb72d7-5ac7-4184-a658-39eb478c323e
+      discovery:
+        server-addr: ${SERVER_ADDR:116.62.142.9:8840}
+        namespace: ccfb72d7-5ac7-4184-a658-39eb478c323e
+

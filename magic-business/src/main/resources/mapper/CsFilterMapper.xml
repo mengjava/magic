@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsFilterMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsFilter">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="filter_name" property="filterName" />
+        <result column="filter_type" property="filterType" />
+        <result column="order_no" property="orderNo" />
+        <result column="sys_car_brand_id" property="sysCarBrandId" />
+        <result column="sys_car_brand_name" property="sysCarBrandName" />
+        <result column="file_name" property="fileName" />
+        <result column="file_group" property="fileGroup" />
+        <result column="file_path" property="filePath" />
+        <result column="sys_car_series" property="sysCarSeries" />
+        <result column="sys_car_series_name" property="sysCarSeriesName" />
+        <result column="min_price" property="minPrice" />
+        <result column="max_price" property="maxPrice" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        filter_name AS filterName,
+        filter_type AS filterType,
+        order_no AS orderNo,
+        sys_car_brand_id AS sysCarBrandId,
+        sys_car_brand_name AS sysCarBrandName,
+        file_name AS fileName,
+        file_group AS fileGroup,
+        file_path AS filePath,
+        sys_car_series AS sysCarSeries,
+        sys_car_series_name AS sysCarSeriesName,
+        min_price AS minPrice, max_price AS maxPrice
+    </sql>
+
+    <!--分页获取筛序信息-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.entity.CsFilter">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            cs_filter
+        WHERE is_deleted = 0
+
+        <if test="filterName != null">
+            AND filter_name LIKE CONCAT ('%',#{filterName},'%')
+        </if>
+
+        <if test="filterType != null">
+            AND filter_type = #{filterType}
+        </if>
+        ORDER BY filter_type ASC,order_no ASC
+    </select>
+
+    <!--通过条件获取标签信息-->
+    <select id="getCsFilterWithCondition" resultType="com.haoqi.magic.business.model.dto.CsFilterDTO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        cs_filter
+        WHERE is_deleted = 0
+        <if test="filterName != null">
+            AND filter_name LIKE CONCAT ('%',#{filterName},'%')
+        </if>
+        <if test="filterType != null">
+            AND filter_type =#{filterType}
+        </if>
+        <if test="sysCarBrandId != null">
+            AND sys_car_brand_id =#{sysCarBrandId}
+        </if>
+        <if test="sysCarBrandName != null">
+            AND sys_car_brand_name LIKE CONCAT ('%',#{sysCarBrandName},'%')
+        </if>
+        <if test="sysCarSeries != null">
+            AND sys_car_series =#{sysCarSeries}
+        </if>
+        <if test="sysCarSeriesName != null">
+            AND sys_car_series_name LIKE CONCAT ('%',#{sysCarSeriesName},'%')
+        </if>
+        ORDER BY filter_type ASC,order_no ASC
+    </select>
+
+</mapper>

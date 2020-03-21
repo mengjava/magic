@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsFinancePayActionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsFinancePayAction">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="payment_status" property="paymentStatus"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="pay_money" property="payMoney"/>
+        <result column="operationing_user" property="operationingUser"/>
+        <result column="operationing_time" property="operationingTime"/>
+        <result column="cs_car_order_id" property="csCarOrderId"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_card_no" property="bankCardNo"/>
+        <result column="bank_user_name" property="bankUserName"/>
+        <result column="bank_user_tel" property="bankUserTel"/>
+        <result column="bank_user_card_no" property="bankUserCardNo"/>
+        <result column="pay_type" property="payType"/>
+        <result column="payment_type" property="paymentType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, payment_status AS paymentStatus, payment_time AS paymentTime, pay_money AS payMoney, operationing_user AS operationingUser, operationing_time AS operationingTime, cs_car_order_id AS csCarOrderId, bank_name AS bankName, bank_card_no AS bankCardNo, bank_user_name AS bankUserName, bank_user_tel AS bankUserTel, bank_user_card_no AS bankUserCardNo, pay_type AS payType, payment_type AS paymentType
+    </sql>
+
+    <select id="selectFinanceByPage" resultType="com.haoqi.magic.business.model.dto.CsFinancePageDTO">
+        SELECT
+        p.id,
+        o.id AS csCarOrderId,
+        o.dispute_process_type,
+        o.dispute_flag,
+        o.cs_car_info_id AS csCarInfoId,
+        o.status AS STATUS,
+        o.order_no AS orderNo,
+        o.sys_car_model_name AS sysCarModelName,
+        o.vin AS vin,
+        o.plate_no_short_name AS plateNoShortName,
+        o.init_date AS initDate,
+        o.buyer_name AS buyerName,
+        o.sell_time AS sellTime,
+        o.dispute_flag AS disputeFlag,
+        p.payment_status,
+        p.payment_time,
+        p.pay_money,
+        p.cs_car_order_id,
+        p.bank_name,
+        p.bank_card_no,
+        p.bank_user_name,
+        p.bank_user_tel,
+        p.bank_user_card_no,
+        p.pay_type,
+        p.payment_type,
+        p.operationing_user,
+        p.operationing_time,
+        audit.transfer_audit_time AS transferAuditTime,
+        audit.dispute_first_audit_time AS disputeFirstAuditTime,
+        audit.dispute_finish_audit_time AS disputeFinishAuditTime,
+        a.pay_time
+        FROM
+        cs_finance_pay_action p
+        LEFT JOIN cs_car_order o
+        ON o.id = p.cs_car_order_id
+        AND o.is_deleted = 0
+        LEFT JOIN cs_account_detail a
+        ON a.cs_car_order_id = o.id
+        AND a.status = 1
+        AND a.trade_type = 7
+        AND a.type = 2
+        LEFT JOIN cs_order_audit audit
+        ON audit.cs_car_order_id = o.id
+        WHERE o.is_deleted = 0
+        <if test="status != null">
+            AND o.status = #{status}
+        </if>
+        <if test="statusList != null &amp;&amp; statusList.size() > 0">
+            AND o.status IN
+            <foreach collection="statusList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="paymentType != null">
+            AND p.payment_type = #{paymentType}
+        </if>
+        <if test="paymentStatus != null">
+            AND p.payment_status = #{paymentStatus}
+        </if>
+        <if test="payType != null">
+            AND p.pay_type = #{payType}
+        </if>
+        <if test="disputeFlagList != null &amp;&amp; disputeFlagList.size() > 0">
+            AND o.dispute_flag IN
+            <foreach collection="disputeFlagList" open="(" separator="," close=")" index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="disputeProcessType != null">
+            AND o.dispute_process_type = #{disputeProcessType}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            AND o.order_no LIKE CONCAT ('%',#{orderNo},'%')
+        </if>
+        <if test="vin != null and vin != ''">
+            AND o.vin LIKE CONCAT ('%',#{vin},'%')
+        </if>
+        <if test="sysCarModelName != null and sysCarModelName != ''">
+            AND o.sys_car_model_name LIKE CONCAT ('%',#{sysCarModelName},'%')
+        </if>
+        <if test="payTimeBegin != null and payTimeBegin != ''">
+            AND a.pay_time &gt; #{payTimeBegin}
+        </if>
+        <if test="payTimeEnd != null and payTimeEnd != ''">
+            AND a.pay_time &lt; #{payTimeEnd}
+        </if>
+        <if test="paymentTimeBegin != null and paymentTimeBegin != ''">
+            AND p.payment_time &gt; #{paymentTimeBegin}
+        </if>
+        <if test="paymentTimeEnd != null and paymentTimeEnd != ''">
+            AND p.payment_time &lt; #{paymentTimeEnd}
+        </if>
+        <if test="transferAuditTimeBegin != null and transferAuditTimeBegin != ''">
+            AND audit.transfer_audit_time &gt; #{transferAuditTimeBegin}
+        </if>
+        <if test="transferAuditTimeEnd != null and transferAuditTimeEnd != ''">
+            AND audit.transfer_audit_time &lt; #{transferAuditTimeEnd}
+        </if>
+        <if test="disputeFirstAuditTimeBegin != null and disputeFirstAuditTimeBegin != ''">
+            AND audit.dispute_first_audit_time &gt; #{disputeFirstAuditTimeBegin}
+        </if>
+        <if test="disputeFirstAuditTimeEnd != null and disputeFirstAuditTimeEnd != ''">
+            AND audit.dispute_first_audit_time &lt; #{disputeFirstAuditTimeEnd}
+        </if>
+        <if test="disputeFinishAuditTimeBegin != null and disputeFinishAuditTimeBegin != ''">
+            AND audit.dispute_finish_audit_time &gt; #{disputeFinishAuditTimeBegin}
+        </if>
+        <if test="disputeFinishAuditTimeEnd != null and disputeFinishAuditTimeEnd != ''">
+            AND audit.dispute_finish_audit_time &lt; #{disputeFinishAuditTimeEnd}
+        </if>
+        ORDER BY p.payment_status ASC, p.payment_time ASC
+    </select>
+
+
+</mapper>

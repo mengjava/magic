@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysAreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysArea">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="province_name" property="provinceName"/>
+        <result column="city_name" property="cityName"/>
+        <result column="province_code" property="provinceCode"/>
+        <result column="city_code" property="cityCode"/>
+        <result column="level" property="level"/>
+        <result column="city_initial" property="cityInitial"/>
+        <result column="hot_city" property="hotCity"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, province_name AS provinceName, city_name AS cityName, province_code AS provinceCode, city_code AS cityCode, level AS level, sys_region_id AS sysRegionId
+    </sql>
+
+
+
+    <update id="updateRegionIdByProvinceCode">
+        UPDATE sys_area area
+        SET area.sys_region_id=#{regionId}
+        WHERE
+        area.province_code IN
+        <foreach collection="provinceCode" open="(" close=")" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateRegionIdNullByRegionId">
+           UPDATE sys_area area
+            SET area.sys_region_id=null
+            WHERE
+       area.sys_region_id=#{regionId}
+    </update>
+
+    <select id="getCityByProvinceCode" resultType="com.haoqi.magic.system.model.dto.SysCityDTO">
+              SELECT
+                area.city_code  AS cityCode,
+                area.city_name  AS cityName,
+                area.id         AS id
+            FROM
+                sys_area area
+            WHERE
+                  area.level=2
+               AND area.province_code =#{provinceCode}
+
+    </select>
+
+    <select id="selectProvinceByMap" resultType="com.haoqi.magic.system.model.dto.SysAreaDTO">
+          SELECT
+                area.province_code  AS provinceCode,
+                area.province_name  AS provinceName,
+                area.id              AS id
+            FROM
+                sys_area area
+            WHERE
+            area.is_deleted=0
+            <if test="level != null">
+               AND area.level = #{level}
+            </if>
+            <if test="sysRegionId != null">
+                AND area.sys_region_id = #{sysRegionId}
+            </if>
+
+    </select>
+    <select id="selectHotCity" resultType="com.haoqi.magic.system.model.dto.CsAppHotCityDTO">
+        SELECT
+          province_name,
+          city_name,
+          city_code,
+          city_initial
+        FROM
+          sys_area
+        WHERE hot_city = 1
+          AND LEVEL = 2
+          ORDER BY city_initial,id ASC
+    </select>
+    <select id="selectAllCity" resultType="com.haoqi.magic.system.model.dto.CsAppHotCityDTO">
+        SELECT
+          province_name,
+          city_name,
+          city_code,
+          city_initial
+        FROM
+          sys_area
+        WHERE is_deleted = 0
+          AND LEVEL = 2
+        ORDER BY city_initial,
+          id ASC
+    </select>
+
+</mapper>

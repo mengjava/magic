@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsOrderDisputeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsOrderDispute">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="cs_car_order_id" property="csCarOrderId" />
+        <result column="cs_dispute_item_id" property="csDisputeItemId" />
+        <result column="text_decs" property="textDecs" />
+        <result column="recheck_result" property="recheckResult" />
+        <result column="money" property="money" />
+        <result column="show_text" property="showText" />
+        <result column="cs_dispute_item_parent_id" property="csDisputeItemParentId" />
+        <result column="recheck_flag" property="recheckFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_order_id AS csCarOrderId, cs_dispute_item_id AS csDisputeItemId, text_decs AS textDecs, recheck_result AS recheckResult, money AS money, show_text AS showText, cs_dispute_item_parent_id AS csDisputeItemParentId, recheck_flag AS recheckFlag
+    </sql>
+
+</mapper>

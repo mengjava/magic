@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarCheckMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarCheck">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="file_name" property="fileName" />
+        <result column="file_group" property="fileGroup" />
+        <result column="file_path" property="filePath" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+        <result column="icon_file_name" property="iconFileName" />
+        <result column="icon_file_group" property="iconFileGroup" />
+        <result column="icon_file_path" property="iconFilePath" />
+        <result column="check_item_text" property="checkItemText" />
+        <result column="cs_car_check_last_item_id" property="csCarCheckLastItemId" />
+        <result column="cs_car_check_item_id" property="csCarCheckItemId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, file_name AS fileName, file_group AS fileGroup, file_path AS filePath, cs_car_info_id AS csCarInfoId, icon_file_name AS iconFileName, icon_file_group AS iconFileGroup, icon_file_path AS iconFilePath, check_item_text AS checkItemText, cs_car_check_last_item_id AS csCarCheckLastItemId, cs_car_check_item_id AS csCarCheckItemId
+    </sql>
+
+
+    <!--删除不在这些范围内的数据-->
+    <delete id="deleteNotInTheseId">
+        DELETE FROM cs_car_check
+        WHERE 1=1
+        AND cs_car_info_id = #{carId}
+        AND id NOT IN
+        <foreach collection="checkIds" open="(" close=")" index="index" item="item" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--通过车辆id，获取车辆检查信息-->
+    <select id="findWithCheckItemByCarId" resultType="com.haoqi.magic.business.model.dto.CarCheckDTO">
+        SELECT
+        a.id,
+        a.file_name,
+        a.file_path,
+        a.check_item_text,
+        a.cs_car_info_id,
+        a.cs_car_check_last_item_id,
+        a.cs_car_check_item_id,
+        b.name AS checkItemName,
+        b.type
+
+        FROM cs_car_check a
+        LEFT JOIN cs_car_check_item b
+        ON a.cs_car_check_item_id = b.id AND b.is_deleted = 0
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.cs_car_info_id = #{carId}
+        ORDER BY a.id
+    </select>
+
+    <!--通过车辆id、检查项id，获取车辆检查信息-->
+    <select id="findWithCheckItemByCarIdItemIds" resultType="com.haoqi.magic.business.model.dto.CarCheckDTO">
+        SELECT
+        a.id,
+        a.file_name,
+        a.file_path,
+        a.check_item_text,
+        a.cs_car_check_last_item_id,
+        a.cs_car_check_item_id,
+        a.cs_car_info_id,
+        b.name AS checkItemName
+
+        FROM cs_car_check a
+        LEFT JOIN cs_car_check_item b
+        ON a.cs_car_check_item_id = b.id AND b.is_deleted = 0
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.cs_car_info_id = #{carId}
+        <if test="checkItemIds != null">
+            AND a.cs_car_check_item_id IN
+            <foreach collection="checkItemIds" open="(" close=")" separator="," index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.id
+    </select>
+
+</mapper>

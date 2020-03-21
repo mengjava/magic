@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsVipMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsVip">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="type" property="type" />
+        <result column="name" property="name" />
+        <result column="period" property="period" />
+        <result column="maintenance_free_num" property="maintenanceFreeNum" />
+        <result column="emission_free_num" property="emissionFreeNum" />
+        <result column="insurance_free_num" property="insuranceFreeNum" />
+        <result column="car_model_free_num" property="carModelFreeNum" />
+        <result column="evaluate_free_num" property="evaluateFreeNum" />
+        <result column="maintenance_price" property="maintenancePrice" />
+        <result column="emission_price" property="emissionPrice" />
+        <result column="insurance_price" property="insurancePrice" />
+        <result column="car_model_price" property="carModelPrice" />
+        <result column="evaluate_price" property="evaluatePrice" />
+        <result column="is_show" property="isShow" />
+        <result column="money" property="money" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, type AS type, name AS name, period AS period, maintenance_free_num AS maintenanceFreeNum, emission_free_num AS emissionFreeNum, insurance_free_num AS insuranceFreeNum, car_model_free_num AS carModelFreeNum, evaluate_free_num AS evaluateFreeNum, maintenance_price AS maintenancePrice, emission_price AS emissionPrice, insurance_price AS insurancePrice, car_model_price AS carModelPrice, evaluate_price AS evaluatePrice, is_show AS isShow, money AS money
+    </sql>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.dto.CsVipDTO">
+        SELECT * FROM cs_vip vip
+        ORDER BY gmt_modified DESC
+    </select>
+
+</mapper>

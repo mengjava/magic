@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarCheckItemMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarCheckItem">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, name AS name, code AS code, parent_id AS parentId, order_no AS orderNo, type AS type
+    </sql>
+
+    <!--通过id，获取带有父节点项名称的检查项-->
+    <select id="getCheckItemWithParentItemNameById" resultType="com.haoqi.magic.business.model.dto.CsCarCheckItemDTO">
+        SELECT
+        a.id,
+        a.name,
+        b.name AS parentItemName
+
+        FROM cs_car_check_item a
+        LEFT JOIN  cs_car_check_item b ON a.parent_id = b.id
+        WHERE 1=1
+        AND a.parent_id != 0
+        AND a.id = #{id}
+    </select>
+
+</mapper>

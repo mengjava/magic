@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsAccountDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsAccountDetail">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_account_id" property="csAccountId"/>
+        <result column="money" property="money"/>
+        <result column="trade_type" property="tradeType"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="serial_no" property="serialNo"/>
+        <result column="third_serial_no" property="thirdSerialNo"/>
+        <result column="pay_type" property="payType"/>
+        <result column="trade_remark" property="tradeRemark"/>
+        <result column="bank_name" property="bankName"/>
+        <result column="bank_card_no" property="bankCardNo"/>
+        <result column="bank_user_name" property="bankUserName"/>
+        <result column="bank_user_tel" property="bankUserTel"/>
+        <result column="bank_user_card_no" property="bankUserCardNo"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_account_id AS csAccountId, money AS money, trade_type AS tradeType, type AS type, status AS status, serial_no AS serialNo, third_serial_no AS thirdSerialNo, pay_type AS payType, trade_remark AS tradeRemark, bank_name AS bankName, bank_card_no AS bankCardNo, bank_user_name AS bankUserName, bank_user_tel AS bankUserTel, bank_user_card_no AS bankUserCardNo
+    </sql>
+
+    <!--分页查询账单明细-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.AccountDetailDTO">
+        SELECT
+        gmt_create,money,trade_type,type,status,serial_no,pay_type,trade_remark,pay_time
+
+        FROM cs_account_detail
+        WHERE 1=1
+        AND is_deleted = 0
+        AND sys_user_id = #{userId}
+        AND gmt_create >= #{timeStart}
+        AND gmt_create &lt;= #{timeEnd}
+        <if test="tradeType != null">
+            AND trade_type = #{tradeType}
+        </if>
+    </select>
+
+    <!--统计收入和支出-->
+    <select id="totalAmount" resultType="com.haoqi.magic.business.model.dto.AccountTotalAmountDTO">
+        SELECT
+        IFNULL(SUM(IF(type = 1, money, 0)),0) AS income,
+        IFNULL(SUM(IF(type = 2, money, 0)),0) AS pay
+        FROM cs_account_detail
+        WHERE 1=1
+        AND is_deleted = 0
+        AND status = 1
+        AND sys_user_id = #{userId}
+        AND gmt_create >= #{timeStart}
+        AND gmt_create &lt;= #{timeEnd}
+        <if test="tradeType != null">
+            AND trade_type = #{tradeType}
+        </if>
+    </select>
+
+</mapper>

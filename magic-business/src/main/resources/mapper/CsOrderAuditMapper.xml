@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsOrderAuditMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsOrderAudit">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="cs_car_order_id" property="csCarOrderId" />
+        <result column="transfer_audit_status" property="transferAuditStatus" />
+        <result column="transfer_audit_time" property="transferAuditTime" />
+        <result column="transfer_audit_remark" property="transferAuditRemark" />
+        <result column="transfer_audit_user_id" property="transferAuditUserId" />
+        <result column="transfer_audit_user" property="transferAuditUser" />
+        <result column="dispute_first_audit_user_id" property="disputeFirstAuditUserId" />
+        <result column="dispute_first_audit_user" property="disputeFirstAuditUser" />
+        <result column="dispute_first_audit_time" property="disputeFirstAuditTime" />
+        <result column="dispute_first_audit_remark" property="disputeFirstAuditRemark" />
+        <result column="dispute_first_audit_status" property="disputeFirstAuditStatus" />
+        <result column="dispute_finish_audit_user_id" property="disputeFinishAuditUserId" />
+        <result column="dispute_finish_audit_user" property="disputeFinishAuditUser" />
+        <result column="dispute_finish_audit_time" property="disputeFinishAuditTime" />
+        <result column="dispute_finish_audit_remark" property="disputeFinishAuditRemark" />
+        <result column="dispute_finish_audit_status" property="disputeFinishAuditStatus" />
+        <result column="cancel_buy_audit_status" property="cancelBuyAuditStatus" />
+        <result column="cancel_buy_audit_audit_time" property="cancelBuyAuditAuditTime" />
+        <result column="cancel_buy_audit_audit_remark" property="cancelBuyAuditAuditRemark" />
+        <result column="cancel_buy_audit_audit_user" property="cancelBuyAuditAuditUser" />
+        <result column="cancel_buy_audit_audit_user_id" property="cancelBuyAuditAuditUserId" />
+        <result column="dispute_audit_json_content" property="disputeAuditJsonContent" />
+        <result column="audit_json_content" property="auditJsonContent" />
+    </resultMap>
+
+
+</mapper>

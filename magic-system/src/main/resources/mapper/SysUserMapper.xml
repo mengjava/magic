@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysUser">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="login_name" property="loginName" />
+        <result column="password" property="password" />
+        <result column="username" property="username" />
+        <result column="is_enabled" property="isEnabled" />
+        <result column="tel" property="tel" />
+        <result column="type" property="type" />
+        <result column="salt" property="salt" />
+        <result column="head_image_url" property="headImageUrl" />
+        <result column="introducer" property="introducer" />
+        <result column="vip_flag" property="vipFlag" />
+        <result column="pay_password" property="payPassword" />
+    </resultMap>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="UserDTOMap" type="com.haoqi.magic.system.model.dto.UserDTO">
+        <id column="id" property="id" />
+        <result column="tel" property="tel" />
+        <result column="login_name" property="loginName" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="type" property="type" />
+        <result column="salt" property="salt" />
+        <result column="is_enabled" property="isEnabled" />
+        <result column="head_image_url" property="headImageUrl" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="introducer" property="introducer" />
+        <result column="vip_flag" property="vipFlag" />
+        <result column="pay_password" property="payPassword" />
+        <result column="freeze_money" property="freezeMoney" />
+        <collection property="roles" ofType="com.haoqi.magic.system.model.dto.RoleDTO">
+            <id column="role_id" property="id"/>
+            <id column="role_name" property="roleName"/>
+            <id column="role_code" property="roleCode"/>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, login_name AS loginName, password AS password, username AS username, is_enabled AS isEnabled, tel AS tel, type AS type, salt AS salt, head_image_url AS headImageUrl
+    </sql>
+
+
+    <!--分页获取用户信息-->
+    <select id="findUserByPage" resultMap="UserDTOMap">
+        SELECT
+        sys_user.id,
+        sys_user.gmt_create,
+        sys_user.is_deleted,
+        sys_user.login_name,
+        sys_user.username,
+        sys_user.type,
+        sys_user.is_enabled,
+        sys_role.id AS role_id,
+        sys_role.role_name,
+        sys_user.introducer,
+        sys_user.vip_flag
+        FROM sys_user
+        LEFT JOIN sys_user_role ON sys_user.id = sys_user_role.sys_user_id
+        LEFT JOIN sys_role  ON sys_role.id = sys_user_role.sys_role_id
+        WHERE 1=1
+        <if test="isDeleted != null">
+            AND sys_user.is_deleted = #{isDeleted}
+        </if>
+        <if test="loginName != null">
+            AND sys_user.login_name = #{loginName}
+        </if>
+        <if test="creator != null">
+            AND sys_user.creator = #{creator}
+        </if>
+        <if test="userName != null">
+            AND (sys_role.role_name LIKE CONCAT('%',#{userName},'%')
+            OR sys_user.login_name LIKE CONCAT('%',#{userName},'%')
+            OR sys_user.username LIKE CONCAT('%',#{userName},'%')
+            )
+        </if>
+        ORDER BY sys_user.gmt_create DESC
+    </select>
+
+
+    <!--通过ID获取用户角色信息-->
+    <select id="getUserWithRoleById" resultMap="UserDTOMap">
+        SELECT
+        su.id,
+        su.tel,
+        su.login_name,
+        su.username,
+        su.type,
+        su.is_enabled,
+        sr.role_name,
+        sr.role_code,
+        sr.id AS role_id,
+        su.vip_flag,
+        su.pay_password,
+        account.freeze_money
+
+        FROM sys_user su
+        LEFT JOIN sys_user_role sur ON su.id = sur.sys_user_id
+        LEFT JOIN sys_role  sr ON sr.id = sur.sys_role_id
+        LEFT JOIN cs_account  account ON account.sys_user_id = su.id
+        WHERE su.is_deleted = 0
+        AND su.id = #{userId}
+    </select>
+
+    <!--通过用户名，获取用户角色信息-->
+    <select id="getUserWithRoleByLoginName" resultMap="UserDTOMap">
+        select sys_user.id,sys_user.login_name,sys_user.username,sys_user.type,sys_user.password,sys_user.salt,
+        sys_user.is_enabled,sys_role.id as role_id,
+        sys_role.role_name,sys_role.role_code,sys_user.head_image_url,sys_user.vip_flag
+
+        from sys_user
+        left join sys_user_role on sys_user.id = sys_user_role.sys_user_id
+        left join sys_role  on sys_role.id = sys_user_role.sys_role_id
+        where 1=1
+        and sys_user.is_deleted = 0
+        and sys_user.login_name = #{loginName}
+    </select>
+
+
+    <select id="getUserListByRole" resultType="com.haoqi.magic.system.model.dto.UserDTO">
+
+      select sys_user.id,sys_user.username
+        from sys_user
+        left join sys_user_role on sys_user.id = sys_user_role.sys_user_id
+        left join sys_role  on sys_role.id = sys_user_role.sys_role_id
+        where 1=1
+        and sys_user.is_deleted = 0
+        and sys_role.role_code = #{typeName}
+
+
+    </select>
+    <select id="findBuyerUserByPage" resultType="com.haoqi.magic.system.model.dto.UserDTO">
+        SELECT
+        sys_user.id,
+        sys_user.is_deleted,
+        sys_user.login_name,
+        sys_user.tel,
+        sys_user.introducer,
+        sys_user.username,
+        sys_user.type,
+        sys_user.is_enabled,
+        sys_user.introducer,
+        sys_user.vip_flag,
+        vip.period  AS period,
+        userVip.begin_date,
+        sys_user.gmt_create,
+        sys_user.is_enabled
+        FROM sys_user
+        LEFT JOIN sys_user_role ON sys_user.id = sys_user_role.sys_user_id
+        LEFT JOIN cs_user_vip userVip   ON userVip.sys_user_id = sys_user.id
+        LEFT JOIN cs_vip vip   ON vip.id = userVip.cs_vip_id
+
+
+        WHERE 1=1
+        AND sys_user.type=5
+        <if test="tel != null and tel != ''">
+            AND sys_user.tel = #{tel}
+        </if>
+        <if test="vipFlag != null ">
+            AND sys_user.vip_flag = #{vipFlag}
+        </if>
+        <if test="period != null">
+            AND  vip.period  = #{period}
+        </if>
+        <if test="isEnabled != null">
+            AND  sys_user.is_enabled  = #{isEnabled}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND sys_user.username LIKE CONCAT('%',#{userName},'%')
+        </if>
+        ORDER BY sys_user.gmt_create DESC
+
+    </select>
+
+    <!--通过用户id，获取用户、是否会员、商家信息-->
+    <select id="getUserAreaWithVipAndDealer" resultType="com.haoqi.magic.system.model.dto.UserDTO">
+        SELECT
+        sys_user.id,
+        sys_user.tel,
+        sys_user.introducer,
+        sys_user.username,
+        sys_user.type,
+        sys_user.vip_flag,
+        sys_user.pay_password,
+        sys_user.head_image_url,
+        dealer.id as dealerId,
+        userVip.expired_date,
+        vip.type AS vipType
+
+        FROM sys_user
+        LEFT JOIN cs_user_vip userVip   ON userVip.sys_user_id = sys_user.id
+        LEFT JOIN cs_car_dealer dealer  ON dealer.sys_user_id = sys_user.id
+        LEFT JOIN cs_vip vip   ON userVip.cs_vip_id = vip.id
+        WHERE 1=1
+        AND sys_user.is_deleted = 0
+        AND sys_user.id = #{userId}
+
+    </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsVipRecordDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsVipRecordDetail">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="service_item_name" property="serviceItemName" />
+        <result column="money" property="money" />
+        <result column="username" property="username" />
+        <result column="status" property="status" />
+        <result column="result" property="result" />
+        <result column="vin" property="vin" />
+        <result column="sys_user_id" property="sysUserId" />
+        <result column="cost_price" property="costPrice" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, service_item_name AS serviceItemName, money AS money, username AS username, status AS status, result AS result, vin AS vin, sys_user_id AS sysUserId, cost_price AS costPrice
+    </sql>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.dto.CsVipRecordDetailDTO">
+        select
+        <include refid="Base_Column_List"/>
+        from cs_vip_record_detail cvrd
+        where cvrd.sys_user_id = #{sysUserId}
+        <if test="vin != null and vin != '' ">
+            and cvrd.vin = #{vin}
+        </if>
+
+        ORDER BY gmt_modified DESC
+
+    </select>
+
+</mapper>

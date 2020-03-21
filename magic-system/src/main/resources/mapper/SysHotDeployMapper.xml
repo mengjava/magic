@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysHotDeployMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysHotDeploy">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="version" property="version" />
+        <result column="file_name" property="fileName" />
+        <result column="file_group" property="fileGroup" />
+        <result column="file_path" property="filePath" />
+        <result column="md5" property="md5" />
+        <result column="url" property="url" />
+        <result column="project_code" property="projectCode" />
+        <result column="app_key" property="appKey" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        is_deleted AS isDeleted,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        name AS name,
+        type AS type,
+        version AS version,
+        file_name AS fileName,
+        file_group AS fileGroup,
+        file_path AS filePath,
+        md5 AS md5,
+        url AS url,
+        project_code AS projectCode,
+        app_key AS appKey
+    </sql>
+
+    <!--分页查询热发布信息-->
+    <select id="findHotDeployPage" resultType="com.haoqi.magic.system.model.entity.SysHotDeploy">
+        SELECT
+          <include refid="Base_Column_List"/>
+        FROM
+          sys_hot_deploy
+        WHERE
+          1=1
+        <if test="name != null">
+            AND name LIKE CONCAT ('%',#{name},'%')
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="isDeleted != null">
+            AND is_deleted = #{isDeleted}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND gmt_create &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND gmt_create &lt;= #{endDate}
+        </if>
+    </select>
+
+    <!--获取全部的热发布信息-->
+    <select id="getAllAppType" resultType="com.haoqi.magic.system.model.dto.SysHotDeployDTO">
+        SELECT
+          app_key AS appKey,
+          NAME AS 'name'
+        FROM
+            `sys_hot_deploy`
+        WHERE
+            is_deleted = 0
+        GROUP BY NAME
+        ORDER BY NAME
+    </select>
+</mapper>

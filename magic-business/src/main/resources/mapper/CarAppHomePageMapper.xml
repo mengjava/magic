@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CarAppHomePageMapper">
+
+    <select id="selectIndexPageParam" resultType="com.haoqi.magic.business.model.dto.HomePageDTO">
+        SELECT
+        cs_car_info.id,
+        cs_car_info.sys_car_model_name,
+        cs_car_info.sys_car_brand_name,
+        cs_car_info.sys_car_series_name,
+        cs_car_info.init_date,
+        cs_car_info.instrument_show_distance AS 'travelDistance',
+        cs_car_info.locate,
+        cs_car_info.wholesale_price AS price,
+        cs_car_info.suggest_price,
+        cs_car_info.scan_num,
+        cs_car_info.scan_base_num,
+        cs_car_info.icon_file_name,
+        cs_car_info.icon_file_group,
+        cs_car_info.icon_file_path,
+        cs_car_dealer.credit_union,
+        cs_car_info.cs_car_dealer_id,
+        cs_car_info.emission_standard_code
+        FROM
+        cs_car_info
+        LEFT JOIN cs_car_dealer
+        ON cs_car_info.cs_car_dealer_id = cs_car_dealer.id
+        WHERE cs_car_dealer.status = 1 AND cs_car_info.publish_status = 2
+        <if test="locate != null and locate != ''">
+            AND cs_car_info.locate = #{locate}
+        </if>
+        <if test="locateStr != null and locateStr != ''">
+            AND cs_car_info.locate = #{locateStr}
+        </if>
+        <if test="travelDistanceNum != null">
+            AND cs_car_info.instrument_show_distance <![CDATA[ <= ]]> #{travelDistanceNum}
+        </if>
+        <if test="ageNum != null">
+            AND TIMESTAMPDIFF(YEAR,cs_car_info.init_date,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')) <![CDATA[ <= ]]>
+            #{ageNum}
+        </if>
+        <if test="creditUnion != null">
+            AND cs_car_dealer.credit_union = #{creditUnion}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND MATCH (cs_car_info.sys_car_brand_name) AGAINST (#{keyword})
+        </if>
+        <if test="carBrand != null and carBrand != ''">
+            AND cs_car_info.sys_car_brand_name = #{carBrand}
+        </if>
+        <if test="carSeries != null and carSeries != ''">
+            AND cs_car_info.sys_car_series_name = #{carSeries}
+        </if>
+        <if test="carModel != null and carModel != ''">
+            AND MATCH (cs_car_info.sys_car_model_name) AGAINST (#{carModel})
+        </if>
+        <if test="carColorList != null and carColorList.size > 0">
+            AND cs_car_info.color_code IN
+            <foreach collection="carColorList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="carTypeList != null and carTypeList.size > 0">
+            AND cs_car_info.car_type_code IN
+            <foreach collection="carTypeList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="fuelTypeList != null and fuelTypeList.size > 0">
+            AND cs_car_info.fuel_type_code IN
+            <foreach collection="fuelTypeList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="emissionStandardList != null and emissionStandardList.size > 0">
+            AND cs_car_info.emission_standard_code IN
+            <foreach collection="emissionStandardList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="importTypeList != null and importTypeList.size > 0">
+            AND cs_car_info.import_type IN
+            <foreach collection="importTypeList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="gearBox != null and gearBox != ''">
+            AND cs_car_info.gear_box_code = #{gearBox}
+        </if>
+        <if test="driveMethod != null and driveMethod != ''">
+            AND cs_car_info.drive_method_code = #{driveMethod}
+        </if>
+        <if test="minPrice != null">
+            AND cs_car_info.wholesale_price >= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND cs_car_info.wholesale_price <![CDATA[ <= ]]> #{maxPrice}
+        </if>
+        <if test="minAgeNum != null">
+            AND TIMESTAMPDIFF(YEAR,cs_car_info.init_date,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')) >= #{minAgeNum}
+        </if>
+        <if test="maxAgeNum != null">
+            AND TIMESTAMPDIFF(YEAR,cs_car_info.init_date,DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i:%s')) <![CDATA[ <= ]]> #{maxAgeNum}
+        </if>
+        <if test="tagStr != null and tagStr != ''">
+            ${tagStr}
+        </if>
+        <if test="carAgeStr != null and carAgeStr != ''">
+            ${carAgeStr}
+        </if>
+        <if test="carDisplacementStr != null and carDisplacementStr != ''">
+            ${carDisplacementStr}
+        </if>
+        <if test="seatNumStr != null and seatNumStr != ''">
+            ${seatNumStr}
+        </if>
+        <choose>
+            <when test="type == 2">
+                AND cs_car_info.have_promote_price = 1
+            </when>
+            <when test="type == 3">
+                AND cs_car_info.have_fixed_price = 1
+            </when>
+        </choose>
+
+        <choose>
+            <when test="tagType == 1">
+                ORDER BY cs_car_info.publish_time DESC
+            </when>
+            <when test="tagType == 2">
+                ORDER BY cs_car_info.wholesale_price DESC
+            </when>
+            <when test="tagType == 3">
+                ORDER BY cs_car_info.wholesale_price ASC
+            </when>
+            <when test="tagType == 4">
+                ORDER BY cs_car_info.init_date DESC
+            </when>
+            <when test="tagType == 5">
+                ORDER BY cs_car_info.instrument_show_distance ASC
+            </when>
+            <when test="tagType == 6">
+                AND cs_car_dealer.credit_union = 1 ORDER BY cs_car_info.publish_time DESC
+            </when>
+            <!--<otherwise>
+                ORDER BY cs_car_info.publish_time DESC
+            </otherwise>-->
+        </choose>
+        <if test="orderByStr != null and orderByStr != ''">
+            ${orderByStr}
+        </if>
+    </select>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.dto.AppCarPageDTO">
+        SELECT
+        id,
+        gmt_create,
+        gmt_modified,
+        car_no,
+        cs_car_dealer_id,
+        sys_car_model_id,
+        sys_car_model_name,
+        sys_car_brand_name,
+        sys_car_series_name,
+        use_type,
+        vin,
+        init_date,
+        product_date,
+        travel_distance,
+        instrument_show_distance,
+        locate,
+        register_locate,
+        emission_standard_code,
+        transfer_num,
+        displacement,
+        displacement_type,
+        gear_box_code,
+        car_type_code,
+        drive_method_code,
+        fuel_type_code,
+        color_code,
+        price,
+        suggest_price,
+        wholesale_price,
+        publish_status,
+        audit_time,
+        publish_time,
+        icon_file_path,
+        trade_flag
+        FROM
+        cs_car_info
+        WHERE publish_status = 2
+        <if test="keyword != null and keyword != ''">
+            AND MATCH (sys_car_brand_name) AGAINST (#{keyword})
+        </if>
+        <if test="carDealerId != null">
+            AND cs_car_dealer_id = #{carDealerId}
+        </if>
+    </select>
+
+</mapper>

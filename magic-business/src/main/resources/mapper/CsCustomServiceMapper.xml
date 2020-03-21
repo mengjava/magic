@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCustomServiceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCustomService">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+        <result column="cs_buy_dealer_id" property="csBuyDealerId" />
+        <result column="process_status" property="processStatus" />
+        <result column="process_time" property="processTime" />
+        <result column="process_remark" property="processRemark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_info_id AS csCarInfoId, cs_buy_dealer_id AS csBuyDealerId, process_status AS processStatus, process_time AS processTime, process_remark AS processRemark
+    </sql>
+    <select id="findByPage" resultType="com.haoqi.magic.business.model.dto.CsCustomServiceDTO">
+        SELECT
+            custom.id,
+            car.id                    AS carId,
+            car.car_no,
+            car.vin,
+            car.plate_no,
+            car.sys_car_model_name,
+            car.instrument_show_distance   AS travelDistance,
+            car.init_date,
+            car.displacement,
+            car.displacement_type,
+            car.gear_box_code,
+            car.color_code,
+            car.publish_status,
+            custom.process_status,
+            custom.intention_time,
+            custom.gmt_modified,
+            car.cs_car_dealer_id      AS csCarDealerId,
+            car.check_user_id         AS checkUserId,
+            custom.process_user_name  AS processUserName,
+            custom.cs_buy_dealer_id   AS csBuyDealerId
+
+        FROM
+            cs_custom_service custom
+        LEFT JOIN cs_car_info car ON car.id = custom.cs_car_info_id
+      WHERE custom.is_deleted = 0
+
+        <if test="carNo != null and carNo != ''">
+            AND car.car_no LIKE CONCAT ('%',#{carNo},'%')
+        </if>
+        <if test="plateNo != null and plateNo != ''">
+            AND car.plate_no LIKE CONCAT ('%',#{plateNo},'%')
+        </if>
+        <if test="vin != null and vin != ''">
+            AND car.vin LIKE CONCAT ('%',#{vin},'%')
+        </if>
+        <if test="sysCarModelName != null and sysCarModelName != ''">
+            AND car.sys_car_model_name LIKE CONCAT ('%',#{sysCarModelName},'%')
+        </if>
+        <if test="dealerId != null">
+            AND car.cs_car_dealer_id = #{dealerId}
+        </if>
+        <if test="sellDealerId != null">
+            AND car.cs_car_dealer_id = #{sellDealerId}
+        </if>
+
+        <if test="buyerDealerId != null">
+            AND custom.cs_buy_dealer_id = #{buyerDealerId}
+        </if>
+
+        <if test="publishStatus != null">
+            AND car.publish_status = #{publishStatus}
+        </if>
+        <if test="processStatus != null">
+            AND custom.process_status = #{processStatus}
+        </if>
+        <if test="planStartDate != null and planEndDate != ''">
+            AND  custom.intention_time  &gt; #{planStartDate}
+        </if>
+        <if test="planEndDate != null and planEndDate != ''">
+            AND  custom.intention_time &lt; #{planEndDate}
+        </if>
+        <if test="updateStartDate != null and updateStartDate != ''">
+            AND  custom.gmt_modified &gt; #{updateStartDate}
+        </if>
+        <if test="updateEndDate != null and updateEndDate != ''">
+            AND  custom.gmt_modified &lt; #{updateEndDate}
+        </if>
+
+    </select>
+    <select id="getLastProcessUserName" resultType="com.haoqi.magic.business.model.dto.CsCustomServiceDTO">
+        SELECT
+          process_user_name
+        FROM
+         cs_custom_service
+        WHERE 1=1
+        AND is_deleted = 0
+        AND cs_car_info_id = #{carId}
+        order by process_time desc
+        limit 1
+
+    </select>
+
+</mapper>

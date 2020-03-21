@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.job.mapper.CsCarMapper">
+
+    <select id="getCarWithSqlStr" resultType="com.haoqi.magic.job.model.dto.CarDTO">
+        SELECT
+              cs_car_info.id AS carId
+        FROM cs_car_info
+        LEFT JOIN cs_car_dealer ON(cs_car_info.cs_car_dealer_id = cs_car_dealer.id AND cs_car_dealer.is_deleted = 0)
+        WHERE cs_car_info.publish_status = 2 AND cs_car_info.is_deleted = 0 ${sqlStr}
+        ORDER BY cs_car_info.id
+    </select>
+
+    <!--获取全部车源数量-->
+    <select id="getCarTotalCount" resultType="java.lang.Integer">
+        SELECT
+              COUNT(1)
+        FROM cs_car_info
+        WHERE is_deleted = 0
+    </select>
+</mapper>

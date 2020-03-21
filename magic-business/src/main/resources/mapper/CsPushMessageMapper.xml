@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsPushMessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsPushMessage">
+        <id column="id" property="id"/>
+        <result column="comp_id" property="compId"/>
+        <result column="comp_name" property="compName"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="json_content" property="jsonContent"/>
+        <result column="user_id" property="userId"/>
+        <result column="push_time" property="pushTime"/>
+        <result column="is_read" property="isRead"/>
+        <result column="push_content" property="pushContent"/>
+        <result column="push_result" property="pushResult"/>
+        <result column="push_type" property="pushType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, comp_id AS compId, comp_name AS compName, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, json_content AS jsonContent, user_id AS userId, push_time AS pushTime, is_read AS isRead, push_content AS pushContent, push_result AS pushResult, push_type AS pushType
+    </sql>
+    <select id="selectByPage" resultType="com.haoqi.magic.business.model.dto.PushMessageDTO">
+        SELECT
+        id AS id,
+        comp_id AS compId,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        json_content AS jsonContent,
+        user_id AS userId,
+        push_time AS pushTime,
+        is_read AS isRead,
+        push_content AS pushContent,
+        push_result AS pushResult,
+        push_type AS pushType
+        FROM
+        cs_push_message
+        WHERE is_deleted = 0
+        <if test="isRead != null">
+            AND is_read = #{isRead}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+    </select>
+
+</mapper>

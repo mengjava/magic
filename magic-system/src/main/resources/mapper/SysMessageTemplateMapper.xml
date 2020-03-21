@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysMessageTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysMessageTemplate">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="template_code" property="templateCode" />
+        <result column="template_content" property="templateContent" />
+        <result column="template_variables" property="templateVariables" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,
+        creator AS creator,
+        modifier AS modifier,
+        gmt_create AS gmtCreate,
+        gmt_modified AS gmtModified,
+        remark AS remark,
+        is_deleted AS isDeleted,
+        template_code AS templateCode,
+        template_content AS templateContent,
+        template_variables AS templateVariables
+    </sql>
+
+    <!--通过ids删除消息模板-->
+    <update id="delMessageTemplateByIds">
+        UPDATE sys_message_template
+        <set>
+            is_deleted = 1 ,
+            gmt_modified = now()
+            <if test="creator != null">
+                ,modifier = #{creator}
+            </if>
+        </set>
+        WHERE is_deleted = 0
+        <if test="creator != null">
+            AND creator = #{creator}
+        </if>
+        AND id IN
+        <foreach collection="ids" open="(" close=")" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <!--更新消息模板-->
+    <update id="updateMessageTemplate">
+        UPDATE sys_message_template
+        <set>
+            gmt_modified = now()
+            <if test="templateCode != null">
+                ,template_code = #{templateCode}
+            </if>
+            <if test="templateContent != null">
+                ,template_content = #{templateContent}
+            </if>
+            <if test="templateVariables != null">
+                ,template_variables = #{templateVariables}
+            </if>
+        </set>
+        WHERE is_deleted = 0
+        AND id = #{id}
+
+    </update>
+
+    <!--判断消息模板是否存在-->
+    <select id="isCodeExist" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM sys_message_template
+        WHERE is_deleted = 0
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+        <if test="templateCode != null">
+            AND template_code = #{templateCode}
+        </if>
+
+
+    </select>
+
+    <!--通过codes批量删除-->
+    <delete id="delMessageTemplateByCodes">
+        UPDATE sys_message_template
+        <set>
+            is_deleted = 1 ,
+            gmt_modified = now()
+            <if test="creator != null">
+                ,modifier = #{creator}
+            </if>
+        </set>
+        WHERE is_deleted = 0
+        <if test="creator != null">
+            AND creator = #{creator}
+        </if>
+        AND template_code IN
+        <foreach collection="codes" open="(" close=")" item="item" index="index" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--分页查询数据-->
+    <select id="findMessageTemplateByPage"
+            resultType="com.haoqi.magic.system.model.dto.SysMessageTemplateDTO">
+
+        SELECT
+            id AS id,
+            is_deleted AS isDeleted,
+            template_code AS templateCode,
+            template_content AS templateContent,
+            template_variables AS templateVariables
+        FROM sys_message_template cmt
+        WHERE 1=1
+        <if test="isDeleted != null">
+            AND cmt.is_deleted = #{isDeleted}
+        </if>
+
+        <if test="keyword != null and keyword != ''">
+            AND cmt.template_code LIKE CONCAT('%',#{keyword},'%')
+        </if>
+    </select>
+</mapper>

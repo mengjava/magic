@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarConfig">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="have_abs" property="haveAbs" />
+        <result column="have_turn_engine" property="haveTurnEngine" />
+        <result column="air_bag" property="airBag" />
+        <result column="window_glass_code" property="windowGlassCode" />
+        <result column="sky_window_code" property="skyWindowCode" />
+        <result column="rearview_mirror_type" property="rearviewMirrorType" />
+        <result column="seat_material_code" property="seatMaterialCode" />
+        <result column="seat_adjust_type_code" property="seatAdjustTypeCode" />
+        <result column="seat_function_code" property="seatFunctionCode" />
+        <result column="music_type" property="musicType" />
+        <result column="navigate" property="navigate" />
+        <result column="dlcc" property="dlcc" />
+        <result column="pdc_code" property="pdcCode" />
+        <result column="rvc_code" property="rvcCode" />
+        <result column="hub_code" property="hubCode" />
+        <result column="air_condition" property="airCondition" />
+        <result column="cs_car_info_id" property="csCarInfoId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, have_abs AS haveAbs, have_turn_engine AS haveTurnEngine, air_bag AS airBag, window_glass_code AS windowGlassCode, sky_window_code AS skyWindowCode, rearview_mirror_type AS rearviewMirrorType, seat_material_code AS seatMaterialCode, seat_adjust_type_code AS seatAdjustTypeCode, seat_function_code AS seatFunctionCode, music_type AS musicType, navigate AS navigate, dlcc AS dlcc, pdc_code AS pdcCode, rvc_code AS rvcCode, hub_code AS hubCode, air_condition AS airCondition, cs_car_info_id AS csCarInfoId
+    </sql>
+
+</mapper>

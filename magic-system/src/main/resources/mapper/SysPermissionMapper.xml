@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysPermissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysPermission">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="menu_name" property="menuName" />
+        <result column="menu_type" property="menuType" />
+        <result column="menu_url" property="menuUrl" />
+        <result column="permission" property="permission" />
+        <result column="parent_id" property="parentId" />
+        <result column="menu_icon" property="menuIcon" />
+        <result column="menu_sort" property="menuSort" />
+        <result column="is_show" property="isShow" />
+    </resultMap>
+
+    <resultMap id="MenuDTOResultMap" type="com.haoqi.magic.system.model.dto.MenuDTO">
+        <id column="id" property="menuId"/>
+        <result column="menu_name" property="name"/>
+        <result column="permission" property="permission"/>
+        <result column="menu_url" property="url"/>
+        <result column="menu_method" property="method"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_icon" property="icon"/>
+        <result column="menu_sort" property="sort"/>
+        <result column="menu_type" property="type"/>
+        <result column="is_show" property="isShow"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, menu_name AS menuName, menu_type AS menuType, menu_url AS menuUrl, permission AS permission, parent_id AS parentId, menu_icon AS menuIcon, menu_sort AS menuSort, is_show AS isShow
+    </sql>
+
+    <select id="findAll" resultMap="MenuDTOResultMap">
+        SELECT
+        id,
+        menu_name,
+        permission,
+        menu_url,
+        menu_method,
+        parent_id,
+        menu_icon,
+        menu_sort,
+        menu_type,
+        is_show
+        FROM
+        sys_permission
+    </select>
+
+
+    <!--通过角色，获取菜单权限列（用户中心使用）-->
+    <select id="findMenuByRoleCodes" resultMap="MenuDTOResultMap">
+        select sys_permission.id,sys_permission.menu_name,sys_permission.permission,sys_permission.menu_url,sys_permission.menu_method,sys_permission.parent_id,
+        sys_permission.menu_icon,sys_permission.menu_sort,sys_permission.menu_type,sys_permission.is_show
+        from sys_permission
+        left join sys_role_permission on sys_role_permission.sys_permission_id = sys_permission.id AND sys_role_permission.is_deleted = 0
+        left join sys_role on sys_role.id = sys_role_permission.sys_role_id and sys_role.is_deleted = 0
+        left join sys_user_role on sys_role.id = sys_user_role.sys_role_id and sys_user_role.is_deleted = 0
+        where 1=1
+        and sys_permission.is_deleted = 0
+        and sys_permission.is_show = 0
+        and sys_user_role.sys_user_id = #{userId}
+        and sys_role.role_code in
+        <foreach collection="roleCodes" open="(" separator="," close=")" index="index" item="item">
+            #{item}
+        </foreach>
+        ORDER BY sys_permission.menu_sort ASC , sys_permission.id ASC
+    </select>
+
+
+    <!--通过角色id，查询菜单 权限-->
+    <select id="findMenuByRoleId" resultMap="MenuDTOResultMap">
+        SELECT
+        sys_permission.id
+        FROM
+        sys_role
+        RIGHT JOIN sys_role_permission ON sys_role_permission.sys_role_id = sys_role.id AND sys_role_permission.is_deleted = 0
+        RIGHT JOIN sys_permission ON sys_permission.id = sys_role_permission.sys_permission_id AND sys_permission.is_deleted = 0
+        WHERE 1=1
+        AND sys_role.is_deleted = 0
+        AND sys_role.id = #{roleId}
+    </select>
+
+    <!--通过角色code，获取菜单列表-->
+    <select id="findByRoleCodes" resultMap="MenuDTOResultMap">
+        select sys_permission.id,sys_permission.menu_name,sys_permission.permission,sys_permission.menu_url,sys_permission.parent_id,sys_permission.menu_icon
+        from sys_permission
+        left join sys_role_permission on sys_role_permission.sys_permission_id = sys_permission.id AND sys_role_permission.is_deleted = 0
+        left join sys_role on sys_role.id = sys_role_permission.sys_role_id and sys_role.is_deleted = 0
+        left join sys_user_role on sys_role.id = sys_user_role.sys_role_id and sys_user_role.is_deleted = 0
+        where 1=1
+        and sys_permission.is_deleted = 0
+        and sys_user_role.sys_user_id = #{userId}
+        and sys_role.role_code in
+        <foreach collection="roleCodes" open="(" separator="," close=")" index="index" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--通过角色，获取菜单权限列（gateway中使用）-->
+    <select id="findMenuByRoleCode" resultMap="MenuDTOResultMap">
+        SELECT
+        sys_permission.menu_url,sys_permission.menu_method
+        FROM
+        sys_role
+        LEFT JOIN sys_role_permission ON sys_role_permission.sys_role_id = sys_role.id AND sys_role_permission.is_deleted = 0
+        LEFT JOIN sys_permission ON sys_permission.id = sys_role_permission.sys_permission_id AND sys_permission.is_deleted = 0
+        LEFT JOIN sys_user_role on sys_role.id = sys_user_role.sys_role_id and sys_user_role.is_deleted = 0
+        WHERE 1=1
+        AND sys_role.is_deleted = 0
+        AND sys_user_role.sys_user_id = #{userId}
+        AND sys_role.role_code = #{roleCode}
+        and sys_permission.menu_url != ''
+        and sys_permission.menu_method != ''
+    </select>
+
+    <!--通过菜单、角色，删除角色菜单关系表-->
+    <delete id="deleteRoleMenuByMenuIdAndRoleCodes">
+        DELETE from sys_role_permission
+        where 1=1
+        and sys_role_permission.sys_permission_id = #{menuId}
+        and sys_role_permission.sys_role_id in (
+        select id from sys_role
+        where role_code in
+        <foreach collection="roleCodes" open="(" separator="," close=")" index="index" item="item">
+            #{item}
+        </foreach>
+        )
+    </delete>
+
+</mapper>

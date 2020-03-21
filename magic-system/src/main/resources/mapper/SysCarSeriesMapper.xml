@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysCarSeriesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysCarSeries">
+        <id column="id" property="id" />
+        <result column="comp_id" property="compId" />
+        <result column="comp_name" property="compName" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="brand_id" property="brandId" />
+        <result column="brand_name" property="brandName" />
+        <result column="series_id" property="seriesId" />
+        <result column="series_name" property="seriesName" />
+        <result column="series_group_name" property="seriesGroupName" />
+        <result column="level_name" property="levelName" />
+        <result column="maker_type" property="makerType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, comp_id AS compId, comp_name AS compName, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, brand_id AS brandId, brand_name AS brandName, series_id AS seriesId, series_name AS seriesName, series_group_name AS seriesGroupName, level_name AS levelName, maker_type AS makerType
+    </sql>
+    <select id="selectCarSeriesPage" resultType="com.haoqi.magic.system.model.entity.SysCarSeries">
+        SELECT
+            id,
+            brand_id,
+            brand_name,
+            series_id,
+            series_name,
+            level_name,
+            maker_type,
+            is_deleted
+        FROM
+            sys_car_series
+        WHERE
+            1 = 1
+        <if test="brandId != null">
+            AND brand_id = #{brandId}
+        </if>
+        <if test="seriesName != null">
+            AND series_name like CONCAT('%',#{seriesName},'%')
+        </if>
+    </select>
+    <select id="selectCarSeriesListByBrandId"
+            resultType="com.haoqi.magic.system.model.entity.SysCarSeries">
+        SELECT
+        s.brand_id,
+        s.brand_name,
+        s.series_id,
+        s.series_name,
+        s.series_group_name,
+        s.level_name,
+        s.maker_type
+        FROM
+        sys_car_series s
+        WHERE s.is_deleted = 0
+        AND s.brand_id = #{brandId}
+        ORDER BY s.series_id ASC
+    </select>
+    <select id="selectMaxSeriesId" resultType="java.lang.Integer">
+        SELECT MAX(series_id) FROM sys_car_series
+    </select>
+</mapper>

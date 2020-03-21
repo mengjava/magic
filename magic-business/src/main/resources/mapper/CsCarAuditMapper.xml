@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsCarAuditMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsCarAudit">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_car_info_id" property="csCarInfoId"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="audit_user_id" property="auditUserId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, is_deleted AS isDeleted, cs_car_info_id AS csCarInfoId, audit_time AS auditTime, audit_status AS auditStatus, audit_user_id AS auditUserId
+    </sql>
+
+    <!--获取最近车辆的审核信息-->
+    <select id="getLastCarAuditByCarId" resultType="com.haoqi.magic.business.model.dto.CarAuditDTO">
+        SELECT
+        id,
+        remark,
+        audit_time,
+        audit_status,
+        audit_user_id,
+        audit_user_name,
+        audit_login_name
+        FROM cs_car_audit
+        WHERE  is_deleted = 0
+        AND cs_car_info_id = #{carId}
+        <if test="auditStatusList != null and auditStatusList.size > 0">
+            AND audit_status IN
+            <foreach collection="auditStatusList" open="(" close=")" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        order by audit_time desc
+        limit 1
+    </select>
+    <select id="findCarAuditListByCarId" resultType="com.haoqi.magic.business.model.dto.CarAuditDTO">
+        SELECT
+        id,
+        remark,
+        audit_time,
+        audit_status,
+        audit_user_id,
+        audit_user_name,
+        audit_login_name
+        FROM cs_car_audit
+        WHERE is_deleted = 0
+        <if test="carId != null">
+            AND cs_car_info_id = #{carId}
+        </if>
+    </select>
+
+</mapper>

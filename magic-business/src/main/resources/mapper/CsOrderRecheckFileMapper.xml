@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.business.mapper.CsOrderRecheckFileMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.business.model.entity.CsOrderRecheckFile">
+        <id column="id" property="id"/>
+        <result column="creator" property="creator"/>
+        <result column="modifier" property="modifier"/>
+        <result column="gmt_create" property="gmtCreate"/>
+        <result column="gmt_modified" property="gmtModified"/>
+        <result column="remark" property="remark"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="cs_car_order_id" property="csCarOrderId"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_group" property="fileGroup"/>
+        <result column="file_path" property="filePath"/>
+        <result column="check_item_text" property="checkItemText"/>
+        <result column="cs_car_check_last_item_id" property="csCarCheckLastItemId"/>
+        <result column="cs_car_check_item_id" property="csCarCheckItemId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <select id="findWithCheckItemByOrderId"
+            resultType="com.haoqi.magic.business.model.dto.CsOrderRecheckFileDTO">
+        SELECT
+        a.id,
+        a.file_name,
+        a.file_path,
+        a.check_item_text,
+        a.cs_car_order_id,
+        a.cs_car_check_last_item_id,
+        a.cs_car_check_item_id,
+        b.name AS checkItemName,
+        b.type
+
+        FROM cs_order_recheck_file a
+        LEFT JOIN cs_car_check_item b
+        ON a.cs_car_check_item_id = b.id AND b.is_deleted = 0
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.cs_car_order_id = #{orderId}
+        ORDER BY a.id
+    </select>
+    <select id="findWithCheckItemByOrderIdItemIds"
+            resultType="com.haoqi.magic.business.model.dto.CsOrderRecheckFileDTO">
+        SELECT
+        a.id,
+        a.file_name,
+        a.file_path,
+        a.check_item_text,
+        a.cs_car_check_last_item_id,
+        a.cs_car_check_item_id,
+        a.cs_car_order_id,
+        b.name AS checkItemName
+
+        FROM cs_order_recheck_file a
+        LEFT JOIN cs_car_check_item b
+        ON a.cs_car_check_item_id = b.id AND b.is_deleted = 0
+        WHERE 1=1
+        AND a.is_deleted = 0
+        AND a.cs_car_order_id = #{orderId}
+        <if test="checkItemIds != null">
+            AND a.cs_car_check_item_id IN
+            <foreach collection="checkItemIds" open="(" close=")" separator="," index="index" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.id
+    </select>
+
+    <!--复检分页-->
+    <select id="findPage" resultType="com.haoqi.magic.business.model.dto.CsOrderRecheckFileDTO">
+        SELECT id,file_name,file_path,check_item_text
+        FROM cs_order_recheck_file
+        WHERE 1=1
+        AND is_deleted = 0
+        AND cs_car_order_id = #{orderId}
+    </select>
+
+</mapper>

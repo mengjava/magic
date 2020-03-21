@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haoqi.magic.system.mapper.SysFileVersionDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.haoqi.magic.system.model.entity.SysFileVersionDetail">
+        <id column="id" property="id" />
+        <result column="creator" property="creator" />
+        <result column="modifier" property="modifier" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="gmt_create" property="gmtCreate" />
+        <result column="gmt_modified" property="gmtModified" />
+        <result column="remark" property="remark" />
+        <result column="file" property="file" />
+        <result column="name" property="name" />
+        <result column="url" property="url" />
+        <result column="file_md5" property="fileMd5" />
+        <result column="group_name" property="groupName" />
+        <result column="file_name" property="fileName" />
+        <result column="file_id" property="fileId" />
+        <result column="source_name" property="sourceName" />
+        <result column="group_type" property="groupType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, creator AS creator, modifier AS modifier, is_deleted AS isDeleted, gmt_create AS gmtCreate, gmt_modified AS gmtModified, remark AS remark, file AS file, name AS name, url AS url, file_md5 AS fileMd5, group_name AS groupName, file_name AS fileName, file_id AS fileId, source_name AS sourceName, group_type AS groupType
+    </sql>
+
+</mapper>

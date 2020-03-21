@@ -16,4 +16,15 @@
       </profile>
     </annotationProcessing>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="magic-auth" options="-parameters" />
+      <module name="magic-business" options="-parameters" />
+      <module name="magic-common" options="-parameters" />
+      <module name="magic-gateway" options="-parameters" />
+      <module name="magic-job" options="-parameters" />
+      <module name="magic-monitor" options="-parameters" />
+      <module name="magic-system" options="-parameters" />
+    </option>
+  </component>
 </project>
